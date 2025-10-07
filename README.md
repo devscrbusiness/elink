@@ -27,7 +27,7 @@ Para poner en marcha el proyecto localmente, sigue estos pasos:
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone https://github.com/tu-usuario/elink.git
+    git clone https://github.com/devscrbusiness/elink.git
     cd elink
     ```
 
