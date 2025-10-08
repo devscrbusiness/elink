@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Business;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -53,6 +54,10 @@ class EditBusinessData extends Component
         ];
 
         if ($this->logo && !is_string($this->logo)) {
+            if ($this->business->logo) {
+                Storage::disk('public')->delete($this->business->logo);
+            }
+
             $data['logo'] = $this->logo->store('logos', 'public');
         }
 
