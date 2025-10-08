@@ -3,11 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Business;
+use Livewire\Attributes\Layout;
 use App\Models\Location;
-use App\Models\SocialLink;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
+
+#[Layout('components.layouts.public')]
 
 class BusinessPublic extends Component
 {
