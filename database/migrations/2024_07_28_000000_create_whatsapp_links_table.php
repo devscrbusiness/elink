@@ -8,21 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('social_links', function (Blueprint $table) {
+        Schema::create('whatsapp_links', function (Blueprint $table) {
             $table->id();
             $table->foreignId('business_id')->constrained()->onDelete('cascade');
-            $table->string('type'); // Ej: facebook, instagram, etc.
+            $table->foreignId('country_id')->constrained()->onDelete('cascade');
+            $table->string('phone_number');
             $table->string('alias')->nullable();
-            $table->string('url');
+            $table->string('custom_slug')->nullable()->unique();
             $table->string('greeting')->nullable();
-            $table->boolean('is_public')->default(true); // Si se muestra en la página pública
-            $table->unique(['business_id', 'url']); // URL única por negocio
+            $table->boolean('is_public')->default(true);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('social_links');
+        Schema::dropIfExists('whatsapp_links');
     }
 };

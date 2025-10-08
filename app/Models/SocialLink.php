@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SocialLink extends Model
 {
     protected $fillable = [
-        'business_id', 'type', 'alias', 'url', 'greeting', 'is_public'
+        'business_id', 'type', 'alias', 'url', 'greeting', 'is_public', 'position'
     ];
 
     public function business()

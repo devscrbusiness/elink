@@ -1,9 +1,11 @@
 <?php
 
 use App\Livewire\BusinessPublic;
+use App\Http\Controllers\RedirectController;
 use App\Livewire\EditBusinessData;
 use App\Livewire\EditBusinessLocation;
 use App\Livewire\EditBusinessSocialLinks;
+use App\Livewire\EditBusinessWhatsapp;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -59,9 +61,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas para editar la información de la empresa
     Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
     Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
+    Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
     Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
 });
 
+// Ruta para la redirección de enlaces personalizados de WhatsApp
+Route::get('contact/{slug}', [RedirectController::class, 'whatsapp'])->name('whatsapp.redirect');
+
 require __DIR__.'/auth.php';
 
-Route::get('/{custom_link}', BusinessPublic::class);
+Route::get('/{business:custom_link}', BusinessPublic::class)->name('business.public');

@@ -32,15 +32,22 @@ class EditBusinessSocialLinks extends Component
 
     public function loadLinks()
     {
-        $this->links = $this->business->socialLinks()->get();
+        $this->links = $this->business->socialLinks()
+            ->where('type', '!=', 'whatsapp')
+            ->orderBy('position')->get();
     }
 
     protected function rules(): array
     {
         return [
-            'type' => ['required', 'string', Rule::in(['whatsapp', 'telegram', 'instagram', 'facebook', 'x', 'tiktok', 'linkedin', 'website', 'other'])],
-            'url' => 'required|url|max:255',
-            'alias' => 'required|string|max:100',
+            'type' => ['required', 'string', Rule::in(['telegram', 'instagram', 'facebook', 'x', 'tiktok', 'linkedin', 'youtube', 'website', 'mail', 'other'])],
+            'url' => [
+                'required',
+                'max:255',
+                // Si el tipo es 'mail', valida como email, si no, como URL.
+                $this->type === 'mail' ? 'email' : 'url',
+            ],
+            'alias' => 'nullable|string|max:100',
             'greeting' => 'nullable|string|max:255',
             'is_public' => 'boolean',
         ];
@@ -62,7 +69,7 @@ class EditBusinessSocialLinks extends Component
 
         $data = [
             'type' => $this->type,
-            'url' => $this->url,
+            'url' => $this->type === 'mail' ? 'mailto:'.$this->url : $this->url,
             'alias' => $this->alias,
             'greeting' => $this->greeting,
             'is_public' => $this->is_public,
@@ -73,6 +80,9 @@ class EditBusinessSocialLinks extends Component
             $link->update($data);
             session()->flash('message', __('edit-business.social_link_update_success'));
         } else {
+            // Asignar la siguiente posición disponible
+            $maxPosition = $this->business->socialLinks()->max('position') ?? 0;
+            $data['position'] = $maxPosition + 1;
             $this->business->socialLinks()->create($data);
             session()->flash('message', __('edit-business.social_link_create_success'));
         }
@@ -86,7 +96,7 @@ class EditBusinessSocialLinks extends Component
         $link = SocialLink::findOrFail($linkId);
         $this->editingId = $link->id;
         $this->type = $link->type;
-        $this->url = $link->url;
+        $this->url = $this->type === 'mail' ? str_replace('mailto:', '', $link->url) : $link->url;
         $this->alias = $link->alias;
         $this->greeting = $link->greeting;
         $this->is_public = $link->is_public;
@@ -104,6 +114,24 @@ class EditBusinessSocialLinks extends Component
         $this->reset(['editingId', 'type', 'url', 'alias', 'greeting', 'is_public']);
         $this->type = 'website';
         $this->is_public = true;
+    }
+
+    /**
+     * Actualiza el orden de los enlaces cuando el usuario los arrastra.
+     *
+     * @param  array  $orderedIds
+     * @return void
+     */
+    public function reorder($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            $link = $this->links->find($id);
+            if ($link) {
+                $link->update(['position' => $index]);
+            }
+        }
+        
+        $this->links = $this->links->sortBy('position')->values();
     }
 
     public function render()

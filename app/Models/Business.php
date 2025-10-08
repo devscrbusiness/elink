@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Business extends Model
@@ -23,6 +24,14 @@ class Business extends Model
     public function socialLinks()
     {
         return $this->hasMany(SocialLink::class);
+    }
+
+    /**
+     * Get the WhatsApp links for the business.
+     */
+    public function whatsappLinks(): HasMany
+    {
+        return $this->hasMany(WhatsappLink::class);
     }
 
     /**

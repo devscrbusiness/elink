@@ -12,11 +12,11 @@
         @endif
 
         <form wire:submit.prevent="save" class="mt-8 space-y-6">
-            <div x-data="mapManager" x-init="init($wire)" class="my-6">
+            <div x-data="mapManager($wire.latitude, $wire.longitude)" class="my-6">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {{ __('edit-business.location_map_label') }}
                 </label>
-                <div wire:ignore id="map" style="height: 350px; border-radius: 0.5rem;"></div>
+                <div wire:ignore x-ref="map" id="map" style="height: 350px; border-radius: 0.5rem;"></div>
                 @error('latitude') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
                 @error('longitude') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
             </div>
@@ -40,55 +40,51 @@
 </div>
 
 @push('scripts')
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap" async defer></script>
-    <script>
-        // Definimos la función de inicialización del mapa en el scope global
-        // para que el callback de la API de Google pueda encontrarla.
-        window.initMap = () => {
-            // Disparamos un evento personalizado para notificar que la API está lista.
-            // Esto desacopla la carga de la API de la inicialización de nuestros componentes.
-            document.dispatchEvent(new CustomEvent('google-maps-ready'));
-        }
-
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('mapManager', () => {
-                return {
-                    map: null,
-                    marker: null,
-                    init($wire) {
-                        const initialize = () => {
-                            const lat = parseFloat($wire.get('latitude')) || -0.2224093;
-                            const lng = parseFloat($wire.get('longitude')) || -78.5335029;
-                            const center = { lat, lng };
-
-                            this.map = new google.maps.Map(document.getElementById('map'), {
-                                center: center,
-                                zoom: 14,
-                            });
-
-                            this.marker = new google.maps.Marker({
-                                position: center,
-                                map: this.map,
-                                draggable: true,
-                            });
-
-                            this.map.addListener('click', (e) => {
-                                this.marker.setPosition(e.latLng);
-                                $wire.set('latitude', e.latLng.lat());
-                                $wire.set('longitude', e.latLng.lng());
-                            });
-
-                            this.marker.addListener('dragend', (e) => {
-                                $wire.set('latitude', e.latLng.lat());
-                                $wire.set('longitude', e.latLng.lng());
-                            });
+    <script data-navigate-once>
+        function mapManager(initialLat, initialLng) {
+            return {
+                map: null,
+                marker: null,
+                init() {
+                    this.loadGoogleMaps().then(() => {
+                        this.initializeMap(initialLat, initialLng);
+                    })
+                },
+                loadGoogleMaps() {
+                    return new Promise((resolve) => {
+                        if (window.google && window.google.maps) {
+                            return resolve();
                         }
-                        
-                        // Si la API de Google ya está lista, inicializa. Si no, espera el evento.
-                        window.google && window.google.maps ? initialize() : document.addEventListener('google-maps-ready', initialize, { once: true });
-                    }
+                        window.initMap = () => resolve();
+                        const script = document.createElement('script');
+                        script.src = `https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap`;
+                        script.async = true;
+                        script.defer = true;
+                        document.head.appendChild(script);
+                    });
+                },
+                initializeMap(lat, lng) {
+                    const center = { lat: parseFloat(lat) || -0.2224093, lng: parseFloat(lng) || -78.5335029 };
+                    this.map = new google.maps.Map(this.$refs.map, {
+                        center: center,
+                        zoom: 14,
+                    });
+                    this.marker = new google.maps.Marker({
+                        position: center,
+                        map: this.map,
+                        draggable: true,
+                    });
+                    this.map.addListener('click', (e) => {
+                        this.marker.setPosition(e.latLng);
+                        this.$wire.set('latitude', e.latLng.lat());
+                        this.$wire.set('longitude', e.latLng.lng());
+                    });
+                    this.marker.addListener('dragend', (e) => {
+                        this.$wire.set('latitude', e.latLng.lat());
+                        this.$wire.set('longitude', e.latLng.lng());
+                    });
                 }
-            });
-        })
+            }
+        }
     </script>
 @endpush

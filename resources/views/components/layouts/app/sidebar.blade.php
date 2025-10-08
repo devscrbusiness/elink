@@ -29,6 +29,9 @@
                         <flux:navlist.item icon="map-pin" :href="route('business.edit.location', $business)" :current="request()->routeIs('business.edit.location')" wire:navigate>
                             {{ __('edit-business.location_nav') }}
                         </flux:navlist.item>
+                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('business.edit.whatsapp', $business)" :current="request()->routeIs('business.edit.whatsapp')" wire:navigate>
+                            {{ __('edit-business.whatsapp_nav') }}
+                        </flux:navlist.item>
                         <flux:navlist.item icon="link" :href="route('business.edit.social-links', $business)" :current="request()->routeIs('business.edit.social-links')" wire:navigate>
                             {{ __('edit-business.social_links_nav') }}
                         </flux:navlist.item>

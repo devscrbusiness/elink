@@ -1,49 +1,153 @@
-<div class="p-6 bg-white border-b border-gray-200 rounded-lg shadow-md font-sans">
-    <div class="flex flex-col md:flex-row items-center">
-        {{-- Logo de la empresa --}}
-        @if ($business->logo_path)
-            <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-                <img class="h-24 w-24 rounded-full object-cover ring-2 ring-gray-300" src="{{ asset('storage/' . $business->logo_path) }}" alt="Logo de {{ $business->name }}">
-            </div>
+<div class="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-lg font-sans overflow-hidden border border-gray-200 dark:border-zinc-700">
+    {{-- Logo --}}
+    <div class="flex flex-col items-center pt-8 pb-4 bg-white dark:bg-zinc-900">
+        @if ($business->logo)
+            <img class="h-32 w-32 rounded-full object-cover border-4 border-white dark:border-zinc-800 shadow-lg" src="{{ asset('storage/' . $business->logo) }}" alt="Logo de {{ $business->name }}">
         @endif
-
-        <div class="flex-grow text-center md:text-left">
-            {{-- Nombre de la empresa --}}
-            <h1 class="text-3xl font-bold text-gray-900">{{ $business->name }}</h1>
-
-            {{-- Sitio web --}}
-            @if ($business->website)
-                <a href="{{ $business->website }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
-                    {{ $business->website }}
-                </a>
-            @endif
-        </div>
     </div>
 
-    {{-- Descripción --}}
-    @if ($business->description)
-        <div class="mt-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ __('About us') }}</h2>
-            <p class="text-gray-700 whitespace-pre-wrap">{{ $business->description }}</p>
+    {{-- Nombre --}}
+    <div class="text-center px-6 pb-4">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ $business->name }}</h1>
+        @if ($business->description)
+            <p class="text-gray-600 dark:text-gray-400">{{ $business->description }}</p>
+        @endif
+    </div>
+
+    {{-- Línea separadora --}}
+    <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
+
+    {{-- Sitios Web --}}
+    @if($allWebsites->count() > 0)
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">
+                {{ trans_choice('edit-business.website_title', $allWebsites->count()) }}
+            </h2>
+            <div class="flex flex-col gap-3">
+                @foreach($allWebsites as $website)
+                    @php
+                        // Limpiamos la URL para mostrarla sin http/https
+                        $displayUrl = preg_replace('/^https?:\/\//', '', $website->url);
+                    @endphp
+                    <a href="{{ $website->url }}" target="_blank" class="flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full text-lg transition">
+                        <x-icons.social.website class="w-6 h-6" />
+                        <span>{{ $website->alias ?: $displayUrl }}</span>
+                    </a>
+                @endforeach
+            </div>
         </div>
+        <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
+    @endif
+
+    {{-- WhatsApp --}}
+    @if($whatsapps->count())
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.contact_whatsapp_title') }}</h2>
+            <div class="flex flex-col gap-3">
+                @foreach($whatsapps as $wa)
+                    @php
+                        // Si tiene un slug personalizado, usa la ruta de redirección. Si no, la URL directa.
+                        $url = $wa->custom_slug ? route('whatsapp.redirect', $wa->custom_slug) : $wa->url;
+                    @endphp
+                    <a href="{{ $url }}" target="_blank" class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full text-lg transition">
+                        <x-icons.social.whatsapp class="w-6 h-6" />
+                        <span>{{ $wa->alias }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+        <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
     @endif
 
     {{-- Redes Sociales --}}
-    @if ($business->social_networks && count((array) $business->social_networks) > 0)
-        <div class="mt-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-2">{{ __('Follow us on our networks') }}</h2>
-            <div class="flex items-center space-x-4">
-                @foreach ($business->social_networks as $network => $url)
-                    @if($url)
-                        <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}" class="text-gray-500 hover:text-gray-800 transition duration-300 ease-in-out">
-                            {{-- Aquí puedes usar SVGs para los iconos de redes sociales --}}
-                            <span class="h-8 w-8">
-                                {{-- Ejemplo para un icono SVG (reemplaza con tus propios iconos) --}}
-                                <x-icon name="{{ $network }}" class="h-8 w-8" />
-                            </span>
-                        </a>
-                    @endif
+    @if($socialNetworks->count())
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">{{ __('edit-business.our_networks_title') }}</h2>
+            
+            {{-- Cuadrícula de Redes Sociales --}}
+            <div class="grid grid-cols-2 gap-3">
+                @foreach($socialNetworks as $link)
+                    @php
+                        $colorClass = match($link->type) { 
+                            'facebook' => 'bg-blue-600 hover:bg-blue-700',
+                            'instagram' => 'bg-fuchsia-600 hover:bg-fuchsia-700',
+                            'youtube' => 'bg-red-600 hover:bg-red-700',
+                            'tiktok' => 'bg-black hover:bg-zinc-800',
+                            'x' => 'bg-black hover:bg-zinc-800',
+                            'linkedin' => 'bg-sky-700 hover:bg-sky-800',
+                            'telegram' => 'bg-sky-500 hover:bg-sky-600',
+                            default => 'bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600',
+                        };
+
+                        $displayText = ($link->alias && strtolower($link->alias) !== strtolower($link->type))
+                            ? $link->alias
+                            : ucfirst($link->type);
+                    @endphp
+                    <a href="{{ $link->url }}" target="_blank"
+                       class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-lg font-semibold text-white transition {{ $colorClass }}">
+                        <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6 text-white" />
+                        <span>{{ $displayText }}</span>
+                    </a>
                 @endforeach
+            </div>
+            
+        </div>
+        <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
+    @endif
+
+    {{-- Mails --}}
+    @if($mails->count())
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.contact_mail_title') }}</h2>
+            <div class="flex flex-col gap-3">
+                @foreach($mails as $link)
+                    @php
+                        $displayEmail = str_replace('mailto:', '', $link->url);
+                    @endphp
+                    <a href="{{ $link->url }}" class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
+                        <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
+                        <span>{{ $link->alias ?: $displayEmail }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+        <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
+    @endif
+
+    {{-- Otros Enlaces (Website, Other) --}}
+    @if($business->socialLinks->whereIn('type', ['other'])->where('is_public', true)->count())
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.other_links_title') }}</h2>
+            <div class="flex flex-col gap-3">
+                @foreach($business->socialLinks->whereIn('type', ['other'])->where('is_public', true) as $link)
+                    <a href="{{ $link->url }}" target="_blank" class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
+                        <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
+                        <span>{{ $link->alias }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+        <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
+    @endif
+
+    {{-- Ubicación --}}
+    @if ($location)
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.location_title') }}</h2>
+            @if($location->detail)
+                <p class="text-center text-gray-600 dark:text-gray-400 mb-4">{{ $location->detail }}</p>
+            @endif
+            <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700">
+                <iframe
+                    width="100%"
+                    height="220"
+                    frameborder="0"
+                    style="border:0"
+                    src="https://www.google.com/maps?q={{ $location->latitude }},{{ $location->longitude }}&hl=es&z=16&output=embed"
+                    allowfullscreen
+                    aria-hidden="false"
+                    tabindex="0"
+                ></iframe>
             </div>
         </div>
     @endif
