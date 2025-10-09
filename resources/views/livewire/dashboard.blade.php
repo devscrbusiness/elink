@@ -17,7 +17,7 @@
                         class="flex items-center gap-2 mt-2"
                     >
                         <a :href="url" target="_blank" class="text-blue-500 hover:underline text-sm" x-text="url"></a>
-                        <button @click="navigator.clipboard.writeText(url); $dispatch('open-notification', { text: '¡Enlace copiado!', type: 'success' })" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <button @click="navigator.clipboard.writeText(url); $dispatch('open-notification', { text: '{{ __('dashboard.link_copied') }}', type: 'success' })" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                             <x-icon name="clipboard-document" class="w-5 h-5" />
                         </button>
                     </div>
@@ -26,22 +26,22 @@
             <div class="mt-6 flex flex-wrap gap-2">
                 <a href="{{ route('business.public', $business->custom_link) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
                     <x-icon name="eye" class="w-4 h-4" />
-                    {{ __('Ver Perfil Público') }}
+                    {{ __('dashboard.view_public_profile') }}
                 </a>
                 <a href="{{ route('business.edit.data', $business) }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
                     <x-icon name="pencil" class="w-4 h-4" />
-                    {{ __('Editar Información') }}
+                    {{ __('dashboard.edit_information') }}
                 </a>
                 <a href="{{ route('business.edit.social-links', $business) }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
                     <x-icon name="plus" class="w-4 h-4" />
-                    {{ __('Añadir Enlace') }}
+                    {{ __('dashboard.add_link') }}
                 </a>
             </div>
         </div>
 
         {{-- Tarjeta de Código QR --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col items-center justify-center">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">{{ __('Código QR') }}</h3>
+            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">{{ __('dashboard.qr_code') }}</h3>
             <div class="p-2 bg-white rounded-lg">
                 @php
                     use BaconQrCode\Renderer\ImageRenderer;
@@ -53,38 +53,38 @@
                 @endphp
                 {!! $writer->writeString(route('business.public', $business->custom_link)) !!}
             </div>
-            <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">{{ __('Escanea para visitar el perfil') }}</p>
+            <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">{{ __('dashboard.scan_to_visit') }}</p>
         </div>
     </div>
 
     {{-- Tarjeta de Estadísticas --}}
     <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ __('Estadísticas') }}</h3>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.stats') }}</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $business->social_links_count }}</p>
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('enlace|enlaces', $business->social_links_count) }} {{ __('sociales') }}</p>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('dashboard.social_links', $business->social_links_count) }}</p>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $business->whatsapp_links_count }}</p>
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('enlace|enlaces', $business->whatsapp_links_count) }} de WhatsApp</p>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('dashboard.whatsapp_links', $business->whatsapp_links_count) }}</p>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-gray-600 dark:text-gray-400">{{ $totalVisits ?? 0 }}</p>
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('Visitas Totales') }}</p>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('dashboard.total_visits') }}</p>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-gray-600 dark:text-gray-400">{{ $totalClicks }}</p>
-                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('Clics Totales') }}</p>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ __('dashboard.total_clicks') }}</p>
             </div>
         </div>
         <div class="mt-4 text-right">
             <button
                 wire:click="resetStats"
-                wire:confirm="¿Estás seguro de que quieres reiniciar todas las estadísticas de visitas y clics? Esta acción no se puede deshacer."
+                wire:confirm="{{ __('dashboard.reset_stats_confirmation') }}"
                 class="text-xs font-semibold text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-500 transition-colors"
             >
-                {{ __('Reiniciar estadísticas') }}
+                {{ __('dashboard.reset_stats') }}
             </button>
         </div>
     </div>
@@ -93,7 +93,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {{-- Gráfico de Visitas --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('Visitas de los últimos 7 días') }}</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.last_7_days_visits') }}</h3>
             <div class="h-64">
                 <canvas id="visitsChart"></canvas>
             </div>
@@ -101,7 +101,7 @@
 
         {{-- Gráfico de Clics por Enlace --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('Clics por enlace') }}</h3>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.clicks_per_link') }}</h3>
             <div class="h-64">
                 <canvas id="clicksChart"></canvas>
             </div>
@@ -137,7 +137,7 @@
                 data: {
                     labels: @json($visitChart['labels']),
                     datasets: [{
-                        label: 'Visitas',
+                        label: '{{ __('dashboard.visits') }}',
                         data: @json($visitChart['data']),
                         backgroundColor: 'rgba(59, 130, 246, 0.2)',
                         borderColor: 'rgba(59, 130, 246, 1)',
@@ -173,7 +173,7 @@
                 data: {
                     labels: @json($clickChart['labels']),
                     datasets: [{
-                        label: 'Clics',
+                        label: '{{ __('dashboard.clicks') }}',
                         data: @json($clickChart['data']),
                         backgroundColor: 'rgba(34, 197, 94, 0.5)',
                         borderColor: 'rgba(34, 197, 94, 1)',

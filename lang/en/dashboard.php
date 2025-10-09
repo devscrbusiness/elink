@@ -1,0 +1,21 @@
+<?php
+
+return [
+    'view_public_profile' => 'View Public Profile',
+    'edit_information' => 'Edit Information',
+    'add_link' => 'Add Link',
+    'qr_code' => 'QR Code',
+    'scan_to_visit' => 'Scan to visit the profile',
+    'stats' => 'Statistics',
+    'social_links' => 'social link|social links',
+    'whatsapp_links' => 'WhatsApp link|WhatsApp links',
+    'total_visits' => 'Total Visits',
+    'total_clicks' => 'Total Clicks',
+    'reset_stats' => 'Reset statistics',
+    'reset_stats_confirmation' => 'Are you sure you want to reset all visit and click statistics? This action cannot be undone.',
+    'last_7_days_visits' => 'Visits from the last 7 days',
+    'clicks_per_link' => 'Clicks per link',
+    'link_copied' => 'Link copied!',
+    'visits' => 'Visits',
+    'clicks' => 'Clicks',
+];
