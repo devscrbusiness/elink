@@ -25,7 +25,8 @@ class BusinessPublic extends Component
     public Collection $whatsapps;
     public Collection $socialNetworks;
     public Collection $mails;
-    public Collection $allWebsites;
+    public Collection $websites;
+    public Collection $others;
     public ?Location $location = null; // Se inicializa como null y se hace nullable
 
     /**
@@ -37,7 +38,7 @@ class BusinessPublic extends Component
         Visit::create(['business_id' => $business->id]);
 
         $this->business = $business->load(['whatsappLinks' => function ($query) {
-            $query->where('is_public', true)->orderBy('id');
+            $query->where('is_public', true)->orderBy('position');
         }, 'socialLinks' => function ($query) {
             $query->where('is_public', true)->orderBy('position');
         }, 'location']);
@@ -50,19 +51,11 @@ class BusinessPublic extends Component
 
     protected function prepareLinks(): void
     {
-        // 1. Preparamos la colección de sitios web.
-        $websites = new Collection();
-        if ($this->business->website) {
-            $websites->push((object) [
-                'url' => $this->business->website,
-                'alias' => __('edit-business.visit_website_button'),
-            ]);
-        }
-
-        // 2. Filtramos la colección de socialLinks para cada tipo.
+        // Filtramos la colección de socialLinks para cada tipo.
         $publicSocialLinks = $this->business->socialLinks;
-        $this->allWebsites = $websites->merge($publicSocialLinks->where('type', 'website'));
+        $this->websites = $publicSocialLinks->where('type', 'website');
         $this->mails = $publicSocialLinks->where('type', 'mail');
+        $this->others = $publicSocialLinks->where('type', 'other');
         $this->socialNetworks = $publicSocialLinks->whereNotIn('type', ['website', 'mail', 'other']);
     }
 

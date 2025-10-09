@@ -81,55 +81,48 @@
         </form>
 
         <!-- Lista de enlaces existentes con drag & drop -->
-        <div
-            x-data="{
-                dragging: null,
-                start(e, id) { this.dragging = id; },
-                end(e) { this.dragging = null; },
-                drop(e, id) {
-                    if (this.dragging === id) return;
-                    let ids = Array.from($refs.list.children).map(el => el.dataset.id);
-                    let from = ids.indexOf(this.dragging.toString());
-                    let to = ids.indexOf(id.toString());
-                    ids.splice(to, 0, ids.splice(from, 1)[0]);
-                    $wire.reorder(ids);
-                    this.dragging = null;
-                }
-            }"
-        >
-            <div x-ref="list">
-                @foreach($links as $link)
-                    <div
-                        class="flex items-center justify-between p-4 mb-2 bg-gray-50 dark:bg-zinc-900/50 rounded-lg cursor-move"
-                        draggable="true"
-                        data-id="{{ $link->id }}"
-                        @dragstart="start($event, {{ $link->id }})"
-                        @dragend="end($event)"
-                        @dragover.prevent
-                        @drop="drop($event, {{ $link->id }})"
-                        :class="{ 'ring-2 ring-pink-400': dragging === {{ $link->id }} }"
-                    >
-                        <div class="flex items-center space-x-4">
-                            <x-icon name="arrows-up-down" class="w-5 h-5 text-gray-400"/>
-                            <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                            <div>
-                                <p class="font-semibold text-gray-800 dark:text-white">{{ $link->alias ?? $link->url }}</p>
-                                <a href="{{ $link->url }}" target="_blank" class="text-sm text-blue-500 hover:underline">{{ $link->url }}</a>
-                            </div>
-                        </div>
-                        <div class="flex space-x-2">
-                            <button wire:click="edit({{ $link->id }})" class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"><x-icon name="pencil" class="w-5 h-5"/></button>
-                            <button wire:click="delete({{ $link->id }})" onclick="return confirm('¿Estás seguro de que quieres eliminar este enlace?')" class="text-gray-500 hover:text-red-600 dark:hover:text-red-400"><x-icon name="trash" class="w-5 h-5"/></button>
-                        </div>
+        <div class="space-y-12">
+            <!-- Redes Sociales -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ __('edit-business.our_networks_title') }}</h3>
+                <div x-data="{ dragging: null, drop(e, id) { if (this.dragging === id) return; let ids = Array.from($refs.socialsList.children).map(el => el.dataset.id); let from = ids.indexOf(this.dragging.toString()); let to = ids.indexOf(id.toString()); ids.splice(to, 0, ids.splice(from, 1)[0]); $wire.reorderSocials(ids); this.dragging = null; } }">
+                    <div x-ref="socialsList">
+                        @forelse($socialNetworks as $link)
+                            @include('partials.social-link-item', ['link' => $link])
+                        @empty
+                            <p class="text-center text-gray-500 dark:text-gray-400 py-4">{{ __('edit-business.no_social_links') }}</p>
+                        @endforelse
                     </div>
-                @endforeach
+                </div>
+            </div>
+
+            <!-- Mails -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ trans_choice('edit-business.contact_mail_title', $mails->count()) }}</h3>
+                <div x-data="{ dragging: null, drop(e, id) { if (this.dragging === id) return; let ids = Array.from($refs.mailsList.children).map(el => el.dataset.id); let from = ids.indexOf(this.dragging.toString()); let to = ids.indexOf(id.toString()); ids.splice(to, 0, ids.splice(from, 1)[0]); $wire.reorderMails(ids); this.dragging = null; } }">
+                    <div x-ref="mailsList">
+                        @forelse($mails as $link)
+                            @include('partials.social-link-item', ['link' => $link])
+                        @empty
+                            <p class="text-center text-gray-500 dark:text-gray-400 py-4">{{ __('edit-business.no_social_links') }}</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sitios Web -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">{{ trans_choice('edit-business.website_title', $websites->count()) }}</h3>
+                <div x-data="{ dragging: null, drop(e, id) { if (this.dragging === id) return; let ids = Array.from($refs.websitesList.children).map(el => el.dataset.id); let from = ids.indexOf(this.dragging.toString()); let to = ids.indexOf(id.toString()); ids.splice(to, 0, ids.splice(from, 1)[0]); $wire.reorderWebsites(ids); this.dragging = null; } }">
+                    <div x-ref="websitesList">
+                        @forelse($websites as $link)
+                            @include('partials.social-link-item', ['link' => $link])
+                        @empty
+                            <p class="text-center text-gray-500 dark:text-gray-400 py-4">{{ __('edit-business.no_social_links') }}</p>
+                        @endforelse
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-@once
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@latest/dist/cdn.min.js" defer></script>
-    @endpush
-@endonce

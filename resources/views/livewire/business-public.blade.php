@@ -68,7 +68,7 @@
                     </a>
                 @endforeach
             </div>
-            
+
         </div>
         <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
     @endif
@@ -93,13 +93,13 @@
     @endif
 
     {{-- Sitios Web --}}
-    @if($allWebsites->count() > 0)
+    @if($websites->count() > 0)
         <div class="p-6">
             <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">
-                {{ trans_choice('edit-business.website_title', $allWebsites->count()) }}
+                {{ trans_choice('edit-business.website_title', $websites->count()) }}
             </h2>
             <div class="flex flex-col gap-3">
-                @foreach($allWebsites as $website)
+                @foreach($websites as $website)
                     @php
                         // Limpieza de la la URL para mostrarla sin http/https
                         $displayUrl = preg_replace('/^https?:\/\//', '', $website->url);
@@ -115,11 +115,11 @@
     @endif
 
     {{-- Otros Enlaces --}}
-    @if($business->socialLinks->whereIn('type', ['other'])->where('is_public', true)->count())
+    @if($others->count())
         <div class="p-6">
             <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.other_links_title') }}</h2>
             <div class="flex flex-col gap-3">
-                @foreach($business->socialLinks->whereIn('type', ['other'])->where('is_public', true) as $link)
+                @foreach($others as $link)
                     <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" target="_blank" class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
                         <span>{{ $link->alias }}</span>

@@ -84,24 +84,14 @@
         </form>
 
         <!-- Lista de enlaces existentes -->
-        <div class="space-y-4">
-            @forelse($links as $link)
-                <div wire:key="{{ $link->id }}" class="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg">
-                    <div class="flex items-center space-x-4">
-                        <x-icons.social.whatsapp class="w-6 h-6 text-gray-500 dark:text-gray-400" />
-                        <div>
-                            <p class="font-semibold text-gray-800 dark:text-white">{{ $link->alias ?? $link->url }}</p>
-                            <a href="{{ $link->url }}" target="_blank" class="text-sm text-blue-500 hover:underline">{{ $link->url }}</a>
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button wire:click="edit({{ $link->id }})" class="text-gray-500 hover:text-blue-600 dark:hover:text-blue-400"><x-icon name="pencil" class="w-5 h-5"/></button>
-                        <button wire:click="delete({{ $link->id }})" wire:confirm="¿Estás seguro de que quieres eliminar este enlace?" class="text-gray-500 hover:text-red-600 dark:hover:text-red-400"><x-icon name="trash" class="w-5 h-5"/></button>
-                    </div>
-                </div>
-            @empty
-                <p class="text-center text-gray-500 dark:text-gray-400 py-4">{{ __('edit-business.no_whatsapp_links') }}</p>
-            @endforelse
+        <div x-data="{ dragging: null, drop(e, id) { if (this.dragging === id) return; let ids = Array.from($refs.list.children).map(el => el.dataset.id); let from = ids.indexOf(this.dragging.toString()); let to = ids.indexOf(id.toString()); ids.splice(to, 0, ids.splice(from, 1)[0]); $wire.reorder(ids); this.dragging = null; } }">
+            <div x-ref="list">
+                @forelse($links as $link)
+                    @include('partials.whatsapp-link-item', ['link' => $link])
+                @empty
+                    <p class="text-center text-gray-500 dark:text-gray-400 py-4">{{ __('edit-business.no_whatsapp_links') }}</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </div>

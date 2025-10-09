@@ -36,7 +36,7 @@ class EditBusinessWhatsapp extends Component
 
     public function loadLinks()
     {
-        $this->links = $this->business->whatsappLinks()->get();
+        $this->links = $this->business->whatsappLinks()->orderBy('position')->get();
     }
 
     protected function rules(): array
@@ -85,6 +85,9 @@ class EditBusinessWhatsapp extends Component
             $link->update($data);
             session()->flash('message', __('edit-business.social_link_update_success'));
         } else {
+            // Asignar la siguiente posición disponible
+            $maxPosition = $this->business->whatsappLinks()->max('position');
+            $data['position'] = is_null($maxPosition) ? 0 : $maxPosition + 1;
             $this->business->whatsappLinks()->create($data);
             session()->flash('message', __('edit-business.social_link_create_success'));
         }
@@ -114,8 +117,23 @@ class EditBusinessWhatsapp extends Component
 
     public function resetForm()
     {
-        $this->reset(['editingId', 'country_id', 'phone_number', 'custom_slug', 'alias', 'greeting', 'is_public']);
+        $this->reset(['editingId', 'phone_number', 'custom_slug', 'alias', 'greeting', 'is_public']);
+        $this->country_id = '1'; // Ecuador por defecto
         $this->is_public = true;
+    }
+
+    /**
+     * Actualiza el orden de los enlaces cuando el usuario los arrastra.
+     *
+     * @param  array  $orderedIds
+     * @return void
+     */
+    public function reorder($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            WhatsappLink::where('id', $id)->update(['position' => $index]);
+        }
+        $this->loadLinks();
     }
 
     public function render()

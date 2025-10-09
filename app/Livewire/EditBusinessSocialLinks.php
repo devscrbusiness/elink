@@ -11,7 +11,9 @@ use Livewire\Component;
 class EditBusinessSocialLinks extends Component
 {
     public Business $business;
-    public $links;
+    public $socialNetworks;
+    public $mails;
+    public $websites;
 
     public ?int $editingId = null;
     public string $type = 'website';
@@ -32,15 +34,26 @@ class EditBusinessSocialLinks extends Component
 
     public function loadLinks()
     {
-        $this->links = $this->business->socialLinks()
+        $allLinks = $this->business->socialLinks()
             ->where('type', '!=', 'whatsapp')
             ->orderBy('position')->get();
+
+        $socialNetworkTypes = ['telegram', 'instagram', 'facebook', 'x', 'tiktok', 'linkedin', 'youtube', 'other'];
+
+        $this->socialNetworks = $allLinks->whereIn('type', $socialNetworkTypes)->values();
+        $this->mails = $allLinks->where('type', 'mail')->values();
+        $this->websites = $allLinks->where('type', 'website')->values();
     }
 
     protected function rules(): array
     {
         return [
-            'type' => ['required', 'string', Rule::in(['telegram', 'instagram', 'facebook', 'x', 'tiktok', 'linkedin', 'youtube', 'website', 'mail', 'other'])],
+            'type' => [
+                'required',
+                'string',
+                // Se incluyen todos los tipos de enlaces sociales, de correo y sitios web.
+                Rule::in(['telegram', 'instagram', 'facebook', 'x', 'tiktok', 'linkedin', 'youtube', 'website', 'mail', 'other'])
+            ],
             'url' => [
                 'required',
                 'max:255',
@@ -80,8 +93,19 @@ class EditBusinessSocialLinks extends Component
             $link->update($data);
             session()->flash('message', __('edit-business.social_link_update_success'));
         } else {
+            $socialNetworkTypes = ['telegram', 'instagram', 'facebook', 'x', 'tiktok', 'linkedin', 'youtube', 'other'];
+            
+            if (in_array($this->type, $socialNetworkTypes)) {
+                $maxPosition = $this->business->socialLinks()->whereIn('type', $socialNetworkTypes)->max('position') ?? -1;
+            } elseif ($this->type === 'mail') {
+                $maxPosition = $this->business->socialLinks()->where('type', 'mail')->max('position') ?? -1;
+            } elseif ($this->type === 'website') {
+                $maxPosition = $this->business->socialLinks()->where('type', 'website')->max('position') ?? -1;
+            } else {
+                $maxPosition = $this->business->socialLinks()->max('position') ?? -1;
+            }
+
             // Asignar la siguiente posición disponible
-            $maxPosition = $this->business->socialLinks()->max('position') ?? 0;
             $data['position'] = $maxPosition + 1;
             $this->business->socialLinks()->create($data);
             session()->flash('message', __('edit-business.social_link_create_success'));
@@ -117,21 +141,45 @@ class EditBusinessSocialLinks extends Component
     }
 
     /**
-     * Actualiza el orden de los enlaces cuando el usuario los arrastra.
+     * Actualiza el orden de las redes sociales.
      *
      * @param  array  $orderedIds
      * @return void
      */
-    public function reorder($orderedIds)
+    public function reorderSocials($orderedIds)
     {
         foreach ($orderedIds as $index => $id) {
-            $link = $this->links->find($id);
-            if ($link) {
-                $link->update(['position' => $index]);
-            }
+            SocialLink::where('id', $id)->update(['position' => $index]);
         }
-        
-        $this->links = $this->links->sortBy('position')->values();
+        $this->loadLinks();
+    }
+
+    /**
+     * Actualiza el orden de los correos.
+     *
+     * @param  array  $orderedIds
+     * @return void
+     */
+    public function reorderMails($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            SocialLink::where('id', $id)->update(['position' => $index]);
+        }
+        $this->loadLinks();
+    }
+
+    /**
+     * Actualiza el orden de los sitios web.
+     *
+     * @param  array  $orderedIds
+     * @return void
+     */
+    public function reorderWebsites($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            SocialLink::where('id', $id)->update(['position' => $index]);
+        }
+        $this->loadLinks();
     }
 
     public function render()
