@@ -5,6 +5,7 @@ use App\Http\Controllers\RedirectController;
 use App\Livewire\EditBusinessData;
 use App\Livewire\EditBusinessLocation;
 use App\Livewire\EditBusinessSocialLinks;
+use App\Http\Controllers\WhatsappRedirectController;
 use App\Livewire\EditBusinessWhatsapp;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
@@ -66,7 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Ruta para la redirección de enlaces personalizados de WhatsApp
-Route::get('contact/{slug}', [RedirectController::class, 'whatsapp'])->name('whatsapp.redirect');
+Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
 
 require __DIR__.'/auth.php';
 

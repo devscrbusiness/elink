@@ -26,6 +26,19 @@ class Business extends Model
         return $this->hasMany(SocialLink::class);
     }
 
+    public function visits()
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    /**
+     * Get all of the clicks for the business through its links.
+     */
+    public function clicks(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Click::class, SocialLink::class, 'business_id', 'clickable_id')->where('clickable_type', SocialLink::class);
+    }
+
     /**
      * Get the WhatsApp links for the business.
      */

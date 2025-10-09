@@ -3,8 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Business;
+use App\Models\Click;
+use App\Models\SocialLink;
+use App\Models\WhatsappLink;
 use Livewire\Attributes\Layout;
 use App\Models\Location;
+use App\Models\Visit;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
@@ -29,6 +33,9 @@ class BusinessPublic extends Component
      */
     public function mount(Business $business): void
     {
+        // Registrar la visita
+        Visit::create(['business_id' => $business->id]);
+
         $this->business = $business->load(['whatsappLinks' => function ($query) {
             $query->where('is_public', true)->orderBy('id');
         }, 'socialLinks' => function ($query) {
@@ -57,6 +64,24 @@ class BusinessPublic extends Component
         $this->allWebsites = $websites->merge($publicSocialLinks->where('type', 'website'));
         $this->mails = $publicSocialLinks->where('type', 'mail');
         $this->socialNetworks = $publicSocialLinks->whereNotIn('type', ['website', 'mail', 'other']);
+    }
+
+    public function logClick(int $linkId, string $linkType)
+    {
+        $model = null;
+        if ($linkType === 'social') {
+            $model = SocialLink::class;
+        } elseif ($linkType === 'whatsapp') {
+            $model = WhatsappLink::class;
+        }
+
+        if ($model) {
+            $link = $model::findOrFail($linkId);
+            $link->clicks()->create();
+            return $link->url;
+        }
+
+        return null;
     }
 
     /**

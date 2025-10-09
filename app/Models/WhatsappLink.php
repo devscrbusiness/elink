@@ -3,22 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class WhatsappLink extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'business_id',
-        'country_id',
-        'phone_number',
-        'alias',
-        'custom_slug',
-        'greeting',
-        'is_public',
+        'business_id', 'country_id', 'phone_number', 'custom_slug', 'alias', 'greeting', 'is_public'
     ];
 
     public function business(): BelongsTo
@@ -31,6 +23,11 @@ class WhatsappLink extends Model
         return $this->belongsTo(Country::class);
     }
 
+    public function clicks(): MorphMany
+    {
+        return $this->morphMany(Click::class, 'clickable');
+    }
+
     /**
      * Get the full WhatsApp URL.
      */
@@ -38,9 +35,16 @@ class WhatsappLink extends Model
     {
         return Attribute::make(
             get: function () {
-                $fullPhone = $this->country->phone_code . $this->phone_number;
-                $url = "https://api.whatsapp.com/send?phone={$fullPhone}";
-                return $this->greeting ? $url . '&text=' . urlencode($this->greeting) : $url;
+                $phoneNumber = preg_replace('/\D/', '', $this->phone_number);
+                $fullPhone = $this->country->phone_code . $phoneNumber;
+
+                $url = "https://wa.me/{$fullPhone}";
+
+                if ($this->greeting) {
+                    return $url . '?text=' . urlencode($this->greeting);
+                }
+
+                return $url;
             }
         );
     }

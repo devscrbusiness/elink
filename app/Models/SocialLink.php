@@ -14,4 +14,11 @@ class SocialLink extends Model
     {
         return $this->belongsTo(Business::class);
     }
+
+    public function clicks()
+    {
+        // Un enlace social puede tener muchos clics.
+        // El segundo argumento es el nombre de la relación polimórfica ('clickable').
+        return $this->morphMany(Click::class, 'clickable');
+    }
 }

@@ -27,7 +27,7 @@
                         // Si tiene un slug personalizado, usa la ruta de redirección. Si no, la URL directa.
                         $url = $wa->custom_slug ? route('whatsapp.redirect', $wa->custom_slug) : $wa->url;
                     @endphp
-                    <a href="{{ $url }}" target="_blank" class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
+                    <a href="{{ $url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $wa->id }}, linkType: 'whatsapp' })" target="_blank" class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
                         <x-icons.social.whatsapp class="w-6 h-6" />
                         <span>{{ $wa->alias }}</span>
                     </a>
@@ -61,7 +61,7 @@
                             ? $link->alias
                             : ucfirst($link->type);
                     @endphp
-                    <a href="{{ $link->url }}" target="_blank"
+                    <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" target="_blank"
                        class="flex items-center justify-center gap-2 py-3 px-4 rounded-full text-lg font-semibold text-gray-200 transition {{ $colorClass }}">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6 text-gray-200" />
                         <span>{{ $displayText }}</span>
@@ -82,7 +82,7 @@
                     @php
                         $displayEmail = str_replace('mailto:', '', $link->url);
                     @endphp
-                    <a href="{{ $link->url }}" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
+                    <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
                         <span>{{ $link->alias ?: $displayEmail }}</span>
                     </a>
@@ -101,10 +101,10 @@
             <div class="flex flex-col gap-3">
                 @foreach($allWebsites as $website)
                     @php
-                        // Limpiamos la URL para mostrarla sin http/https
+                        // Limpieza de la la URL para mostrarla sin http/https
                         $displayUrl = preg_replace('/^https?:\/\//', '', $website->url);
                     @endphp
-                    <a href="{{ $website->url }}" target="_blank" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
+                    <a href="{{ $website->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $website->id }}, linkType: 'social' })" target="_blank" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
                         <x-icons.social.website class="w-6 h-6" />
                         <span>{{ $website->alias ?: $displayUrl }}</span>
                     </a>
@@ -120,7 +120,7 @@
             <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.other_links_title') }}</h2>
             <div class="flex flex-col gap-3">
                 @foreach($business->socialLinks->whereIn('type', ['other'])->where('is_public', true) as $link)
-                    <a href="{{ $link->url }}" target="_blank" class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
+                    <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" target="_blank" class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full text-lg transition">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
                         <span>{{ $link->alias }}</span>
                     </a>
@@ -151,4 +151,18 @@
             </div>
         </div>
     @endif
+
+    @push('scripts')
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('logClick', ({ linkId, linkType }) => {
+                @this.call('logClick', linkId, linkType).then(url => {
+                    if (url) {
+                        window.open(url, '_blank');
+                    }
+                });
+            });
+        });
+    </script>
+    @endpush
 </div>
