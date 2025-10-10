@@ -43,15 +43,7 @@
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col items-center justify-center">
             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">{{ __('dashboard.qr_code') }}</h3>
             <div class="p-2 bg-white rounded-lg">
-                @php
-                    use BaconQrCode\Renderer\ImageRenderer;
-                    use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-                    use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-                    use BaconQrCode\Writer;
-                    $renderer = new ImageRenderer(new RendererStyle(150), new SvgImageBackEnd());
-                    $writer = new Writer($renderer);
-                @endphp
-                {!! $writer->writeString(route('business.public', $business->custom_link)) !!}
+                {!! $qrCode !!}
             </div>
             <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">{{ __('dashboard.scan_to_visit') }}</p>
         </div>
@@ -94,7 +86,7 @@
         {{-- Gráfico de Visitas --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.last_7_days_visits') }}</h3>
-            <div class="h-64">
+            <div class="relative h-64">
                 <canvas id="visitsChart"></canvas>
             </div>
         </div>
@@ -102,7 +94,7 @@
         {{-- Gráfico de Clics por Enlace --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.clicks_per_link') }}</h3>
-            <div class="h-64">
+            <div class="relative h-64">
                 <canvas id="clicksChart"></canvas>
             </div>
         </div>
@@ -130,15 +122,47 @@
             if (visitsChartInstance) visitsChartInstance.destroy();
             if (clicksChartInstance) clicksChartInstance.destroy();
 
+            // --- Procesamiento para el Gráfico de Visitas (con zona horaria local) ---
+            const visitsDataByHourUtc = @json($visitsData); // Recibe {'YYYY-MM-DD HH:00:00': count} en UTC
+            const dailyVisitsLocal = {};
+
+            // 1. Inicializar los últimos 7 días en la zona horaria LOCAL del navegador
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                // Usamos getFullYear, getMonth, getDate para obtener la fecha local correctamente
+                const localDateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                dailyVisitsLocal[localDateString] = 0;
+            }
+
+            // 2. Re-agrupar las visitas (que vienen en UTC) al día LOCAL correspondiente
+            for (const utcHourString in visitsDataByHourUtc) {
+                const count = visitsDataByHourUtc[utcHourString];
+                // Interpretar la fecha como UTC y convertirla a la fecha local del navegador
+                const localDate = new Date(utcHourString.replace(' ', 'T') + 'Z');
+                const localDateString = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
+
+                if (dailyVisitsLocal.hasOwnProperty(localDateString)) {
+                    dailyVisitsLocal[localDateString] += count;
+                }
+            }
+
+            // 3. Preparar etiquetas y datos para el gráfico, ordenados por fecha
+            const visitLabels = Object.keys(dailyVisitsLocal).sort().map(dateStr => {
+                const date = new Date(dateStr + 'T00:00:00'); // Interpretar como fecha local para el formato de la etiqueta
+                return date.toLocaleString(undefined, { weekday: 'short', day: 'numeric' });
+            });
+            const visitCounts = Object.keys(dailyVisitsLocal).sort().map(date => dailyVisitsLocal[date]);
+
             // Gráfico de Visitas
             const visitsCtx = document.getElementById('visitsChart').getContext('2d');
             visitsChartInstance = new Chart(visitsCtx, {
                 type: 'line',
                 data: {
-                    labels: @json($visitChart['labels']),
+                    labels: visitLabels,
                     datasets: [{
                         label: '{{ __('dashboard.visits') }}',
-                        data: @json($visitChart['data']),
+                        data: visitCounts,
                         backgroundColor: 'rgba(59, 130, 246, 0.2)',
                         borderColor: 'rgba(59, 130, 246, 1)',
                         borderWidth: 2,

@@ -6,6 +6,10 @@ use App\Models\Business;
 use App\Models\SocialLink;
 use App\Models\Click;
 use App\Models\WhatsappLink;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -31,19 +35,12 @@ class Dashboard extends Component
 
         // --- Datos para los gráficos ---
         $visitsData = $this->business->visits()
-            ->where('created_at', '>=', Carbon::now()->subDays(6))
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
-            ->groupBy('date')
-            ->get()
-            ->keyBy('date');
+            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay())
+            // Agrupamos por hora en UTC. Nota: strftime es para SQLite. Usa DATE_FORMAT para MySQL.
+            ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:00:00') as hour"), DB::raw('count(*) as count'))
+            ->groupBy('hour')
+            ->pluck('count', 'hour'); // La clave ahora es 'hour', que sí existe en el select.
 
-        $visitLabels = [];
-        $visitCounts = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i)->format('Y-m-d');
-            $visitLabels[] = Carbon::parse($date)->translatedFormat('D d');
-            $visitCounts[] = $visitsData->get($date)->count ?? 0;
-        }
 
         // --- Clics por link ---
         $socialLinksWithClicks = $this->business->socialLinks()->withCount('clicks')->get();
@@ -53,11 +50,17 @@ class Dashboard extends Component
         $clickLabels = $allLinksWithClicks->pluck('alias')->map(fn($alias, $key) => $alias ?: $allLinksWithClicks[$key]->url)->toArray();
         $clickCounts = $allLinksWithClicks->pluck('clicks_count')->toArray();
 
+        // --- Generar Código QR ---
+        $renderer = new ImageRenderer(new RendererStyle(150), new SvgImageBackEnd());
+        $writer = new Writer($renderer);
+        $qrCode = $writer->writeString(route('business.public', $this->business->custom_link));
+
         return view('livewire.dashboard', [
             'totalVisits' => $totalVisits,
             'totalClicks' => $totalClicks,
-            'visitChart' => ['labels' => $visitLabels, 'data' => $visitCounts],
+            'qrCode' => $qrCode,
             'clickChart' => ['labels' => $clickLabels, 'data' => $clickCounts],
+            'visitsData' => $visitsData,
         ]);
     }
 
