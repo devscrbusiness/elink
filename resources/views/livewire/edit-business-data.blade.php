@@ -1,3 +1,11 @@
+@php
+    // Si es un admin editando, usa el layout de admin.
+    // Si no, usa el layout de contenido de la app.
+    $layout = $isAdminEditing ? 'admin.layout' : 'layouts.app-content';
+@endphp
+<x-dynamic-component :component="$layout" :business="$business" :isAdminEditing="$isAdminEditing">
+
+
 <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
     <div class="w-full max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('edit-business.form_title') }}</h2>
@@ -56,13 +64,14 @@
             </div>
 
             <!-- Custom Link (Read-only) -->
+            <!-- Custom Link -->
             <div>
                 <label for="custom_link" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('edit-business.custom_link_label') }}</label>
                 <div class="flex rounded-md shadow-sm mt-1">
                     <span class="inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md dark:bg-zinc-600 dark:text-gray-300 dark:border-zinc-600">elink/</span>
-                    <input type="text" id="custom_link" value="{{ $business->custom_link }}" readonly
-                           class="flex-1 w-full px-4 py-3 text-gray-500 bg-gray-100 border-gray-300 rounded-r-md dark:bg-zinc-700 dark:text-gray-300 dark:border-zinc-600">
+                    <input wire:model.lazy="custom_link" type="text" id="custom_link" required class="flex-1 w-full px-4 py-3 text-gray-900 bg-gray-100 border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white dark:border-zinc-600">
                 </div>
+                @error('custom_link') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
             </div>
 
             <div class="flex justify-end">
@@ -73,4 +82,4 @@
             </div>
         </form>
     </div>
-</div>
+</x-dynamic-component>

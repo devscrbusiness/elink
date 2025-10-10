@@ -1,6 +1,9 @@
 <?php
 
+use App\Livewire\Admin\EditUserPassword;
+use App\Livewire\Admin\EditUserProfile;
 use App\Livewire\BusinessPublic;
+use App\Livewire\Admin\UserList;
 use App\Http\Controllers\RedirectController;
 use App\Livewire\EditBusinessData;
 use App\Livewire\EditBusinessLocation;
@@ -28,6 +31,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/dashboard', function () {
             return 'Bienvenido, Administrador';
         })->name('admin.dashboard');
+        Route::get('/admin/users', UserList::class)->name('admin.users');
+        Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
+        Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
+
+        // Nuevas rutas para editar perfil y contraseña de usuario
+        Route::get('admin/users/{user}/edit/profile', EditUserProfile::class)->name('admin.users.edit.profile');
+        Route::get('admin/users/{user}/edit/password', EditUserPassword::class)->name('admin.users.edit.password');
+        Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
+        Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
     });
 
     // Rutas solo para Usuarios (rol = 2)
@@ -64,10 +76,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
     Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
     Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
-});
 
-// Ruta para la redirección de enlaces personalizados de WhatsApp
-Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
+    // Ruta para la redirección de enlaces personalizados de WhatsApp
+    Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
+});
 
 require __DIR__.'/auth.php';
 

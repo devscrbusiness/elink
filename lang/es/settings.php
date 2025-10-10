@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'profile_nav' => 'Perfil',
+    'password_nav' => 'Contraseña',
+    'two_factor_auth_nav' => 'Autenticación de Dos Factores',
+    'appearance_nav' => 'Apariencia',
+    'profile_subtitle' => 'Actualiza tu nombre y dirección de correo electrónico.',
+    'email_unverified' => 'Tu dirección de correo electrónico no está verificada.',
+    'resend_verification' => 'Haz clic aquí para reenviar el correo de verificación.',
+    'verification_sent' => 'Se ha enviado un nuevo enlace de verificación a tu dirección de correo electrónico.',
+    'saved' => 'Guardado.',
+    'appearance_subtitle' => 'Actualiza la configuración de apariencia de tu cuenta.',
+    'light_theme' => 'Claro',
+    'dark_theme' => 'Oscuro',
+    'system_theme' => 'Sistema',
+    'update_password_title' => 'Actualizar contraseña',
+    'update_password_subtitle' => 'Asegúrate de que tu cuenta utiliza una contraseña larga y aleatoria para mantenerse segura.',
+    'current_password' => 'Contraseña actual',
+    'new_password' => 'Nueva contraseña',
+    'confirm_password' => 'Confirmar Contraseña',
+    'password_updated' => 'Contraseña actualizada.',
+    'delete_account_title' => 'Eliminar Cuenta',
+    'delete_account_subtitle' => 'Elimina permanentemente tu cuenta y todos sus recursos.',
+    'delete_account_button' => 'Eliminar Cuenta',
+    'delete_account_confirmation_title' => '¿Estás seguro de que quieres eliminar tu cuenta?',
+    'delete_account_confirmation_text' => 'Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán borrados permanentemente. Por favor, introduce tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta.',
+];

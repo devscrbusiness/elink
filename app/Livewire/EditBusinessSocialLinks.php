@@ -21,12 +21,17 @@ class EditBusinessSocialLinks extends Component
     public string $alias = '';
     public ?string $greeting = null;
     public bool $is_public = true;
+    public bool $isAdminEditing = false;
 
     public function mount(Business $business)
     {
-        if ($business->user_id !== Auth::id()) {
-            abort(403);
+        $user = Auth::user();
+        // Permitir el acceso si el usuario es administrador (role=1) O si es el dueño de la empresa.
+        if ($user->role !== 1 && $business->user_id !== $user->id) {
+            abort(403, 'No tienes permiso para editar esta empresa.');
         }
+
+        $this->isAdminEditing = ($user->role === 1 && $business->user_id !== $user->id);
 
         $this->business = $business;
         $this->loadLinks();

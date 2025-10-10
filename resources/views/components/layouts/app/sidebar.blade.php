@@ -12,9 +12,21 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
+                <flux:navlist.group :heading="__('app.platform')" class="grid">
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('app.dashboard') }}</flux:navlist.item>
                 </flux:navlist.group>
+
+                @if (auth()->user()->role === 1)
+                    <flux:navlist.group :heading="__('admin.navigation_heading')" class="grid">
+                        @php
+                            $isEditingOtherUserBusiness = request()->routeIs('business.edit.*') && request()->route('business') && request()->route('business')->user_id !== auth()->id();
+                            $isEditingOtherUserProfile = request()->routeIs('admin.users.edit.*') && request()->route('user') && request()->route('user')->id !== auth()->id();
+                        @endphp
+                        <flux:navlist.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users') || $isEditingOtherUserBusiness || $isEditingOtherUserProfile" wire:navigate>
+                            {{ __('admin.users_navigation') }}
+                        </flux:navlist.item>
+                    </flux:navlist.group>
+                @endif
 
                 @php
                     // Asumimos que el usuario tiene una relación 'business'
@@ -22,34 +34,29 @@
                 @endphp
 
                 @if ($business)
-                    <flux:navlist.group :heading="__('edit-business.my_business_heading')" class="grid">
-                        <flux:navlist.item icon="pencil-square" :href="route('business.edit.data', $business)" :current="request()->routeIs('business.edit.data')" wire:navigate>
+                    <flux:navlist.group :heading="__('app.my_business')" class="grid">
+                        @php
+                            $isEditingOwnBusiness = request()->route('business') && request()->route('business')->user_id === auth()->id();
+                        @endphp
+                        <flux:navlist.item icon="pencil-square" :href="route('business.edit.data', $business)" :current="request()->routeIs('business.edit.data') && $isEditingOwnBusiness" wire:navigate>
                             {{ __('edit-business.information_nav') }}
                         </flux:navlist.item>
-                        <flux:navlist.item icon="map-pin" :href="route('business.edit.location', $business)" :current="request()->routeIs('business.edit.location')" wire:navigate>
-                            {{ __('edit-business.location_nav') }}
-                        </flux:navlist.item>
-                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('business.edit.whatsapp', $business)" :current="request()->routeIs('business.edit.whatsapp')" wire:navigate>
+                        <flux:navlist.item icon="chat-bubble-left-right" :href="route('business.edit.whatsapp', $business)" :current="request()->routeIs('business.edit.whatsapp') && $isEditingOwnBusiness" wire:navigate>
                             {{ __('edit-business.whatsapp_nav') }}
                         </flux:navlist.item>
-                        <flux:navlist.item icon="link" :href="route('business.edit.social-links', $business)" :current="request()->routeIs('business.edit.social-links')" wire:navigate>
+                        <flux:navlist.item icon="link" :href="route('business.edit.social-links', $business)" :current="request()->routeIs('business.edit.social-links') && $isEditingOwnBusiness"
+                            wire:navigate>
                             {{ __('edit-business.social_links_nav') }}
+                        </flux:navlist.item>
+                        <flux:navlist.item icon="map-pin" :href="route('business.edit.location', $business)" :current="request()->routeIs('business.edit.location') && $isEditingOwnBusiness"
+                            wire:navigate>
+                            {{ __('edit-business.location_nav') }}
                         </flux:navlist.item>
                     </flux:navlist.group>
                 @endif
             </flux:navlist>
 
             <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
 
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
@@ -82,7 +89,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('app.settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
@@ -90,7 +97,7 @@
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
+                            {{ __('app.log_out') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>
@@ -132,7 +139,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>
+                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('app.settings') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
@@ -140,7 +147,7 @@
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full">
-                            {{ __('Log Out') }}
+                            {{ __('app.log_out') }}
                         </flux:menu.item>
                     </form>
                 </flux:menu>

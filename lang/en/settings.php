@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'profile_nav' => 'Profile',
+    'password_nav' => 'Password',
+    'two_factor_auth_nav' => 'Two-Factor Auth',
+    'appearance_nav' => 'Appearance',
+    'profile_subtitle' => 'Update your name and email address.',
+    'email_unverified' => 'Your email address is unverified.',
+    'resend_verification' => 'Click here to re-send the verification email.',
+    'verification_sent' => 'A new verification link has been sent to your email address.',
+    'saved' => 'Saved.',
+    'appearance_subtitle' => 'Update the appearance settings for your account.',
+    'light_theme' => 'Light',
+    'dark_theme' => 'Dark',
+    'system_theme' => 'System',
+    'update_password_title' => 'Update password',
+    'update_password_subtitle' => 'Ensure your account is using a long, random password to stay secure.',
+    'current_password' => 'Current password',
+    'new_password' => 'New password',
+    'confirm_password' => 'Confirm Password',
+    'password_updated' => 'Password updated.',
+    'delete_account_title' => 'Delete Account',
+    'delete_account_subtitle' => 'Permanently delete your account and all of its resources.',
+    'delete_account_button' => 'Delete Account',
+    'delete_account_confirmation_title' => 'Are you sure you want to delete your account?',
+    'delete_account_confirmation_text' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+];

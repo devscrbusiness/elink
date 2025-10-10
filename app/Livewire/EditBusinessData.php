@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Business;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -15,22 +16,29 @@ class EditBusinessData extends Component
 
     public Business $business;
 
+    public bool $isAdminEditing = false;
+
     public string $name = '';
     public ?string $description = '';
     public ?string $website = '';
+    public string $custom_link = '';
     public $logo; // Puede ser un archivo subido o la ruta existente
 
     public function mount(Business $business)
     {
-        // Asegurarse de que el usuario solo pueda editar su propia empresa
-        if ($business->user_id !== Auth::id()) {
-            abort(403);
+        $user = Auth::user();
+        // Permitir el acceso si el usuario es administrador (role=1) O si es el dueño de la empresa.
+        if ($user->role !== 1 && $business->user_id !== $user->id) {
+            abort(403, 'No tienes permiso para editar esta empresa.');
         }
+
+        $this->isAdminEditing = ($user->role === 1 && $business->user_id !== $user->id);
 
         $this->business = $business;
         $this->name = $business->name;
         $this->description = $business->description;
         $this->website = $business->website;
+        $this->custom_link = $business->custom_link;
     }
 
     protected function rules(): array
@@ -39,6 +47,12 @@ class EditBusinessData extends Component
             'name' => 'required|string|min:3|max:255',
             'description' => 'nullable|string|max:1000',
             'website' => 'nullable|url|max:255',
+            'custom_link' => [
+                'required',
+                'string',
+                'min:3',
+                Rule::unique('businesses')->ignore($this->business->id),
+            ],
             'logo' => 'nullable|image|max:1024', // 1MB Max
         ];
     }
@@ -51,6 +65,7 @@ class EditBusinessData extends Component
             'name' => $this->name,
             'description' => $this->description,
             'website' => $this->website,
+            'custom_link' => $this->custom_link,
         ];
 
         if ($this->logo && !is_string($this->logo)) {

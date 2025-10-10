@@ -1,3 +1,10 @@
+@php
+    // Si es un admin editando, usa el layout de admin.
+    // Si no, usa el layout de contenido de la app.
+    $layout = $isAdminEditing ? 'admin.layout' : 'layouts.app-content';
+@endphp
+<x-dynamic-component :component="$layout" :business="$business" :isAdminEditing="$isAdminEditing">
+
 <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
     <div class="w-full max-w-2xl mx-auto">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('edit-business.whatsapp_links_title') }}</h2>
@@ -95,3 +102,4 @@
         </div>
     </div>
 </div>
+</x-dynamic-component>
