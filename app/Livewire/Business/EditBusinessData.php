@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Business;
 
 use App\Models\Business;
 use Illuminate\View\View;
