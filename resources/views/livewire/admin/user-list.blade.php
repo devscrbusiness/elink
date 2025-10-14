@@ -1,5 +1,11 @@
 <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('admin.users_title') }}</h2>
+    <div class="flex justify-between items-center">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('admin.users_title') }}</h2>
+        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
+            <x-icon name="plus" class="w-4 h-4" />
+            <span>{{ __('admin.add_user_button') }}</span>
+        </a>
+    </div>
 
     <input type="text" wire:model.live="query" placeholder="{{ __('admin.search_placeholder') }}" class="mt-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-zinc-700 dark:border-zinc-600 dark:placeholder-gray-400 dark:text-white">
 
@@ -54,11 +60,18 @@
                             <x-icon name="eye" class="w-5 h-5" />
                         </a>
                         @endif
-                        <a href="{{ route('business.edit.data', $user->business) }}" wire:navigate class="p-2 text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors" title="{{ __('admin.edit_user_tooltip') }}">
-                            <x-icon name="pencil" class="w-5 h-5" />
-                        </a>
+                        {{-- El enlace de edición cambia según si el usuario tiene una empresa o no --}}
                         @if (auth()->id() !== $user->id)
-
+                            @if($user->business)
+                                <a href="{{ route('admin.business.edit.data', $user->business) }}" wire:navigate class="p-2 text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors" title="{{ __('admin.edit_user_tooltip') }}">
+                                    <x-icon name="pencil" class="w-5 h-5" />
+                                </a>
+                            @else
+                                <a href="{{ route('admin.users.edit.profile', $user) }}" wire:navigate class="p-2 text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-colors" title="{{ __('admin.edit_user_tooltip') }}">
+                                    <x-icon name="pencil" class="w-5 h-5" />
+                                </a>
+                            @endif
+                        
                         <flux:modal.trigger name="delete-profile-{{ $user->id }}">
                             <button class="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors" title="{{ __('admin.delete_user_tooltip') }}">
                                     <x-icon name="trash" class="w-5 h-5" />

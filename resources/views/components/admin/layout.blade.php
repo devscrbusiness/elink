@@ -1,4 +1,8 @@
-@props(['business', 'isAdminEditing'])
+@props([
+    'user',
+    'business' => null,
+    'isAdminEditing' => false
+])
 
 <div>
     @if ($isAdminEditing)
@@ -12,31 +16,33 @@
     <div class="flex items-start max-md:flex-col">
         <div class="me-10 w-full pb-4 md:w-[220px]">
             <flux:navlist>
-                <flux:navlist.item :href="route('admin.users.edit.profile', $business->user)" :current="request()->routeIs('admin.users.edit.profile')" wire:navigate>
+                <flux:navlist.item :href="route('admin.users.edit.profile', $user)" :current="request()->routeIs('admin.users.edit.profile')" wire:navigate>
                     {{ __('admin.user_profile_nav') }}
                 </flux:navlist.item>
-                <flux:navlist.item :href="route('admin.users.edit.password', $business->user)" :current="request()->routeIs('admin.users.edit.password')" wire:navigate>
+                <flux:navlist.item :href="route('admin.users.edit.password', $user)" :current="request()->routeIs('admin.users.edit.password')" wire:navigate>
                     {{ __('admin.user_password_nav') }}
                 </flux:navlist.item>
             </flux:navlist>
 
-            <flux:separator class="my-4" />
+            @if($business)
+                <flux:separator class="my-4" />
 
-            <p class="px-4 pb-2 text-sm font-semibold">{{ __('admin.business_settings_heading') }}</p>
-            <flux:navlist>
-                <flux:navlist.item :href="route('business.edit.data', $business)" :current="request()->routeIs('business.edit.data')" wire:navigate>
-                    {{ __('edit-business.information_nav') }}
-                </flux:navlist.item>
-                <flux:navlist.item :href="route('business.edit.location', $business)" :current="request()->routeIs('business.edit.location')" wire:navigate>
-                    {{ __('edit-business.location_nav') }}
-                </flux:navlist.item>
-                <flux:navlist.item :href="route('business.edit.whatsapp', $business)" :current="request()->routeIs('business.edit.whatsapp')" wire:navigate>
-                    {{ __('edit-business.whatsapp_nav') }}
-                </flux:navlist.item>
-                <flux:navlist.item :href="route('business.edit.social-links', $business)" :current="request()->routeIs('business.edit.social-links')" wire:navigate>
-                    {{ __('edit-business.social_links_nav') }}
-                </flux:navlist.item>
-            </flux:navlist>
+                <p class="px-4 pb-2 text-sm font-semibold">{{ __('admin.business_settings_heading') }}</p>
+                <flux:navlist>
+                    <flux:navlist.item :href="route('admin.business.edit.data', $business)" :current="request()->routeIs('admin.business.edit.data')" wire:navigate>
+                        {{ __('edit-business.information_nav') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item :href="route('admin.business.edit.location', $business)" :current="request()->routeIs('admin.business.edit.location')" wire:navigate>
+                        {{ __('edit-business.location_nav') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item :href="route('admin.business.edit.whatsapp', $business)" :current="request()->routeIs('admin.business.edit.whatsapp')" wire:navigate>
+                        {{ __('edit-business.whatsapp_nav') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item :href="route('admin.business.edit.social-links', $business)" :current="request()->routeIs('admin.business.edit.social-links')" wire:navigate>
+                        {{ __('edit-business.social_links_nav') }}
+                    </flux:navlist.item>
+                </flux:navlist>
+            @endif
         </div>
 
         <flux:separator class="md:hidden" />

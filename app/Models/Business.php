@@ -2,13 +2,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 class Business extends Model
 {
-    protected $fillable = [
-        'user_id', 'name', 'description', 'logo', 'website', 'custom_link'
-    ];
+    protected $fillable = ['user_id', 'name', 'description', 'logo', 'website', 'custom_link'];
 
     /**
      * Get the user that owns the business.
@@ -61,5 +60,24 @@ class Business extends Model
     public function location()
     {
         return $this->hasOne(Location::class);
+    }
+
+    /**
+     * Generate a unique custom link from a business name.
+     *
+     * @param string $name
+     * @return string
+     */
+    public static function generateUniqueCustomLink(string $name): string
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('custom_link', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
+        return $slug;
     }
 }

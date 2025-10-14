@@ -13,9 +13,18 @@ class UserList extends Component
 
     public $query = '';
 
+    public function mount()
+    {
+        if (session()->has('notification')) {
+            $notification = session('notification');
+            $this->dispatch('open-notification', text: $notification['text'], type: $notification['type']);
+            session()->forget('notification');
+        }
+    }
+
     public function deleteUser(User $user): void
     {
-        if ($user->id === Auth::user()->id()) {
+        if ($user->id === Auth::id()) {
             return;
         }
 

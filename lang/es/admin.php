@@ -21,6 +21,11 @@ return [
     'edit_profile_subtitle' => 'Actualiza el nombre y la dirección de correo electrónico del usuario.',
     'password_updated_success' => 'Contraseña actualizada con éxito.',
     'users_title' => 'Usuarios',
+    'add_user_button' => 'Añadir Usuario',
+    'create_user_title' => 'Crear Nuevo Usuario',
+    'create_user_subtitle' => 'Completa los datos para registrar un nuevo usuario en la plataforma.',
+    'create_user_button' => 'Crear Usuario',
+    'user_created_success' => '¡Usuario creado con éxito!',
     'search_placeholder' => 'Buscar usuarios...',
     'table_header_name' => 'Nombre',
     'table_header_email' => 'Email',
@@ -34,4 +39,6 @@ return [
     'edit_user_tooltip' => 'Editar usuario',
     'delete_user_tooltip' => 'Eliminar usuario',
     'no_users_found' => 'No se encontraron usuarios.',
+    'password' => 'Contraseña',
+    'confirm_password' => 'Confirmar Contraseña',
 ];

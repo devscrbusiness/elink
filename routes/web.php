@@ -26,17 +26,16 @@ Route::view('dashboard', 'dashboard')
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas solo para Administradores (rol = 1)
-    Route::middleware('role:1')->group(function () {
-        Route::get('/admin/dashboard', function () {
-            return 'Bienvenido, Administrador';
-        })->name('admin.dashboard');
-        Route::get('/admin/users', UserList::class)->name('admin.users');
+    Route::prefix('admin')->name('admin.')->middleware('role:1')->group(function () {
+        Route::get('/dashboard', fn() => 'Bienvenido, Administrador')->name('dashboard');
+        Route::get('/users', UserList::class)->name('users');
+        Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
         Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
 
         // Nuevas rutas para editar perfil y contraseña de usuario
-        Route::get('admin/users/{user}/edit/profile', EditUserProfile::class)->name('admin.users.edit.profile');
-        Route::get('admin/users/{user}/edit/password', EditUserPassword::class)->name('admin.users.edit.password');
+        Route::get('users/{user}/edit/profile', EditUserProfile::class)->name('users.edit.profile');
+        Route::get('users/{user}/edit/password', EditUserPassword::class)->name('users.edit.password');
         Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
         Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
     });

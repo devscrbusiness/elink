@@ -1,4 +1,4 @@
-<x-admin.layout :business="$user->business" :isAdminEditing="true">
+<x-admin.layout :user="$user" :business="$user->business" :isAdminEditing="true">
     <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('admin.update_password_title') }}</h2>
         <p class="mt-2 text-gray-600 dark:text-gray-300">
