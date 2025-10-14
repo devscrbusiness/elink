@@ -1,20 +1,37 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'log_in_to_your_account' => 'Log in to your account',
+    'enter_email_and_password' => 'Enter your email and password below to log in',
+    'email_address' => 'Email address',
+    'password' => 'Password',
+    'forgot_your_password' => 'Forgot your password?',
+    'remember_me' => 'Remember me',
+    'log_in' => 'Log in',
+    'dont_have_an_account' => "Don't have an account?",
+    'sign_up' => 'Sign up',
+    'create_an_account' => 'Create an account',
+    'enter_details_to_create' => 'Enter your details below to create your account',
+    'name' => 'Name',
+    'full_name' => 'Full name',
+    'confirm_password' => 'Confirm password',
+    'create_account' => 'Create account',
+    'already_have_an_account' => 'Already have an account?',
+    'forgot_password' => 'Forgot password',
+    'enter_email_for_reset_link' => 'Enter your email to receive a password reset link',
+    'email_password_reset_link' => 'Email password reset link',
+    'or_return_to' => 'Or, return to',
+    'reset_password' => 'Reset password',
+    'please_enter_new_password' => 'Please enter your new password below',
+    'email' => 'Email',
+    'confirm_password_title' => 'Confirm password',
+    'confirm_password_description' => 'This is a secure area of the application. Please confirm your password before continuing.',
+    'confirm' => 'Confirm',
+    'authentication_code' => 'Authentication Code',
+    'enter_auth_code' => 'Enter the authentication code provided by your authenticator application.',
+    'recovery_code' => 'Recovery Code',
+    'enter_recovery_code' => 'Please confirm access to your account by entering one of your emergency recovery codes.',
+    'continue' => 'Continue',
+    'login_using_recovery_code' => 'login using a recovery code',
+    'login_using_auth_code' => 'login using an authentication code',
 ];

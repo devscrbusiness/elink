@@ -1,20 +1,37 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
-    'failed' => 'Confirme que el correo o la contraseña sean correctos.',
-    'password' => 'La contraseña es incorrecta.',
-    'throttle' => 'Muchos intentos fallidos, intente nuevamente en :seconds segundos.',
-
+    'log_in_to_your_account' => 'Inicia sesión en tu cuenta',
+    'enter_email_and_password' => 'Ingresa tu correo y contraseña para iniciar sesión',
+    'email_address' => 'Correo electrónico',
+    'password' => 'Contraseña',
+    'forgot_your_password' => '¿Olvidaste tu contraseña?',
+    'remember_me' => 'Recordarme',
+    'log_in' => 'Iniciar sesión',
+    'dont_have_an_account' => '¿No tienes una cuenta?',
+    'sign_up' => 'Regístrate',
+    'create_an_account' => 'Crear una cuenta',
+    'enter_details_to_create' => 'Ingresa tus datos para crear tu cuenta',
+    'name' => 'Nombre',
+    'full_name' => 'Nombre completo',
+    'confirm_password' => 'Confirmar contraseña',
+    'create_account' => 'Crear cuenta',
+    'already_have_an_account' => '¿Ya tienes una cuenta?',
+    'forgot_password' => 'Olvidé mi contraseña',
+    'enter_email_for_reset_link' => 'Ingresa tu correo para recibir un enlace de restablecimiento',
+    'email_password_reset_link' => 'Enviar enlace de restablecimiento',
+    'or_return_to' => 'O, regresa a',
+    'reset_password' => 'Restablecer contraseña',
+    'please_enter_new_password' => 'Por favor, ingresa tu nueva contraseña',
+    'email' => 'Correo electrónico',
+    'confirm_password_title' => 'Confirmar contraseña',
+    'confirm_password_description' => 'Esta es un área segura de la aplicación. Por favor, confirma tu contraseña antes de continuar.',
+    'confirm' => 'Confirmar',
+    'authentication_code' => 'Código de Autenticación',
+    'enter_auth_code' => 'Ingresa el código de autenticación proporcionado por tu aplicación de autenticación.',
+    'recovery_code' => 'Código de Recuperación',
+    'enter_recovery_code' => 'Por favor, confirma el acceso a tu cuenta ingresando uno de tus códigos de recuperación de emergencia.',
+    'continue' => 'Continuar',
+    'login_using_recovery_code' => 'iniciar sesión con un código de recuperación',
+    'login_using_auth_code' => 'iniciar sesión con un código de autenticación',
 ];
