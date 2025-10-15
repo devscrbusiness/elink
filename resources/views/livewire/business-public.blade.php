@@ -1,4 +1,4 @@
-<div class="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-lg font-sans overflow-hidden border border-gray-200 dark:border-zinc-700">
+<div class="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-lg barlow-semi-condensed-regular overflow-hidden border border-gray-200 dark:border-zinc-700">
     {{-- Logo --}}
     <div class="flex flex-col items-center pt-8 pb-4 bg-white dark:bg-zinc-900">
         @if ($business->logo)
