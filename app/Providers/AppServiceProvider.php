@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $router = $this->app->make(\Illuminate\Routing\Router::class);
+        $router->pushMiddlewareToGroup('web', \App\Http\Middleware\SetLocale::class);
     }
 }

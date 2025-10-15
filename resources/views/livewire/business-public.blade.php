@@ -1,4 +1,47 @@
 <div class="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-lg barlow-semi-condensed-regular overflow-hidden border border-gray-200 dark:border-zinc-700">
+    {{-- Selector de idioma --}}
+    <div class="flex items-center justify-center gap-2 p-3">
+        <a href="{{ route('locale.switch', 'es') }}"
+           aria-pressed="{{ app()->getLocale() === 'es' ? 'true' : 'false' }}"
+           class="inline-flex items-center gap-2 px-3 py-2 rounded-full border font-semibold transition
+                  {{ app()->getLocale() === 'es' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:border-zinc-700' }}">
+            <span class="w-5 h-5 inline-block" aria-hidden="true">
+                <svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                    <rect width="60" height="36" fill="#c60b1e"/>
+                    <rect y="8" width="60" height="20" fill="#ffc400"/>
+                </svg>
+            </span>
+            <span class="sr-only">Español</span>
+            <span>ES</span>
+        </a>
+        <a href="{{ route('locale.switch', 'en') }}"
+           aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}"
+           class="inline-flex items-center gap-2 px-3 py-2 rounded-full border font-semibold transition
+                  {{ app()->getLocale() === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:border-zinc-700' }}">
+            <span class="w-5 h-5 inline-block" aria-hidden="true">
+                <svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                    <rect width="60" height="36" fill="#012169"/>
+                    <g fill="#fff">
+                        <rect x="26" width="8" height="36"/>
+                        <rect y="14" width="60" height="8"/>
+                    </g>
+                    <g fill="#c8102e">
+                        <rect x="28" width="4" height="36"/>
+                        <rect y="16" width="60" height="4"/>
+                    </g>
+                    <g stroke="#fff" stroke-width="4">
+                        <path d="M0 0 L60 36 M60 0 L0 36"/>
+                    </g>
+                    <g stroke="#c8102e" stroke-width="2">
+                        <path d="M0 0 L60 36 M60 0 L0 36"/>
+                    </g>
+                </svg>
+            </span>
+            <span class="sr-only">English</span>
+            <span>EN</span>
+        </a>
+    </div>
+
     {{-- Logo --}}
     <div class="flex flex-col items-center pt-8 pb-4 bg-white dark:bg-zinc-900">
         @if ($business->logo)
