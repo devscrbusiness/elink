@@ -10,6 +10,30 @@
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
+{{-- Inserta el inicializador antes de cargar CSS/JS para evitar flash --}}
+<script>
+(function(){
+    try {
+        // Si no hay preferencia guardada, fuerza 'light' por defecto.
+        if (!localStorage.getItem('flux.appearance') && !localStorage.getItem('theme') && !localStorage.getItem('appearance')) {
+            localStorage.setItem('flux.appearance', 'light');
+            localStorage.setItem('theme', 'light');
+            localStorage.setItem('appearance', 'light');
+        }
+
+        // Aplica la clase 'dark' en <html> solo si la preferencia es 'dark'
+        var pref = localStorage.getItem('flux.appearance') || localStorage.getItem('theme') || localStorage.getItem('appearance');
+        if (pref === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    } catch (e) {
+        // no-op
+    }
+})();
+</script>
+
 @vite(['resources/css/app.css', 'resources/js/app.js'])
  <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
