@@ -20,6 +20,13 @@
 
         <form wire:submit.prevent="save" class="mt-8 space-y-6">
             <div x-data="mapManager($wire.latitude, $wire.longitude)" class="my-6">
+                <!-- Search Input -->
+                <div class="mb-4">
+                    <input x-ref="searchBox" type="text" placeholder="{{ __('map.search_location_placeholder') }}"
+                           class="block w-full px-4 py-3 text-gray-900 bg-gray-100 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white dark:border-zinc-600">
+                </div>
+
+                <!-- Map -->
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {{ __('edit-business.location_map_label') }}
                 </label>
@@ -64,7 +71,7 @@
                         }
                         window.initMap = () => resolve();
                         const script = document.createElement('script');
-                        script.src = `https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMap`;
+                        script.src = `https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&libraries=places&callback=initMap`;
                         script.async = true;
                         script.defer = true;
                         document.head.appendChild(script);
@@ -89,6 +96,27 @@
                     this.marker.addListener('dragend', (e) => {
                         this.$wire.set('latitude', e.latLng.lat());
                         this.$wire.set('longitude', e.latLng.lng());
+                    });
+
+                    // Search Box
+                    const searchBox = new google.maps.places.SearchBox(this.$refs.searchBox);
+                    this.map.addListener('bounds_changed', () => {
+                        searchBox.setBounds(this.map.getBounds());
+                    });
+
+                    searchBox.addListener('places_changed', () => {
+                        const places = searchBox.getPlaces();
+                        if (places.length == 0) {
+                            return;
+                        }
+                        const place = places[0];
+                        if (!place.geometry || !place.geometry.location) {
+                            return;
+                        }
+                        this.map.setCenter(place.geometry.location);
+                        this.marker.setPosition(place.geometry.location);
+                        this.$wire.set('latitude', place.geometry.location.lat());
+                        this.$wire.set('longitude', place.geometry.location.lng());
                     });
                 }
             }
