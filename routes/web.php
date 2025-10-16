@@ -84,6 +84,7 @@ Route::get('locale/{lang}', [LocaleController::class, 'switch'])->name('locale.s
 // Rutas de redirección para enlaces con tracking (públicas)
 Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
 Route::get('/wa-link/{id}', [WhatsappRedirectController::class, 'redirectById'])->name('whatsapp.redirect.id');
+Route::get('/link/{id}', [LinkRedirectController::class, 'redirect'])->name('link.redirect');
 
 require __DIR__.'/auth.php';
 
