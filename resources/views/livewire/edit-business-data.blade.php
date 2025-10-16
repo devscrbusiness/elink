@@ -3,7 +3,7 @@
     // Si no, usa el layout de contenido de la app.
     $layout = $isAdminEditing ? 'admin.layout' : 'layouts.app-content';
 @endphp
-<x-dynamic-component :component="$layout" :business="$business" :isAdminEditing="$isAdminEditing">
+<x-dynamic-component :component="$layout" :user="$user" :business="$business" :isAdminEditing="$isAdminEditing">
 
 
 <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">

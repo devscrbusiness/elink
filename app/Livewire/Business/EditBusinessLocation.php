@@ -67,6 +67,8 @@ class EditBusinessLocation extends Component
 
     public function render()
     {
-        return view('livewire.edit-business-location');
+        return view('livewire.edit-business-location', [
+            'user' => $this->business->user,
+        ]);
     }
 }

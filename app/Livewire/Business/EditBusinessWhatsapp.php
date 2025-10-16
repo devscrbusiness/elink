@@ -144,7 +144,8 @@ class EditBusinessWhatsapp extends Component
     public function render()
     {
         return view('livewire.edit-business-whatsapp', [
-            'countries' => $this->countries,
+            'user' => $this->business->user,
+            'countries' => $this->countries
         ]);
     }
 }

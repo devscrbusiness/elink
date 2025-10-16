@@ -83,6 +83,8 @@ class EditBusinessData extends Component
 
     public function render()
     {
-        return view('livewire.edit-business-data');
+        return view('livewire.edit-business-data', [
+            'user' => $this->business->user,
+        ]);
     }
 }

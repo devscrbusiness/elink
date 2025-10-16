@@ -189,6 +189,8 @@ class EditBusinessSocialLinks extends Component
 
     public function render()
     {
-        return view('livewire.edit-business-social-links');
+        return view('livewire.edit-business-social-links', [
+            'user' => $this->business->user,
+        ]);
     }
 }
