@@ -67,10 +67,10 @@
             <div class="flex flex-col gap-3">
                 @foreach($whatsapps as $wa)
                     @php
-                        // Si tiene un slug personalizado, usa la ruta de redirección. Si no, la URL directa.
-                        $url = $wa->custom_slug ? route('whatsapp.redirect', $wa->custom_slug) : $wa->url;
+                        // Si tiene slug, usa la ruta de slug. Si no, la de ID para poder registrar el clic.
+                        $url = $wa->custom_slug ? route('whatsapp.redirect', $wa->custom_slug) : route('whatsapp.redirect.id', $wa->id);
                     @endphp
-                    <a href="{{ $url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $wa->id }}, linkType: 'whatsapp' })" target="_blank" class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-gray-200 font-bold py-3 px-4 rounded-full transition">
+                    <a href="{{ $url }}" target="_blank" class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-gray-200 font-bold py-3 px-4 rounded-full transition">
                         <x-icons.social.whatsapp class="w-6 h-6" />
                         <span class="select-none">{{ $wa->alias }}</span>
                     </a>

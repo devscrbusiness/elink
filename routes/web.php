@@ -4,11 +4,13 @@ use App\Livewire\Admin\EditUserPassword;
 use App\Livewire\Admin\EditUserProfile;
 use App\Livewire\BusinessPublic;
 use App\Livewire\Admin\UserList;
+use App\Livewire\Admin\Subscriptions;
 use App\Livewire\Business\EditBusinessData;
 use App\Livewire\Business\EditBusinessLocation;
 use App\Livewire\Business\EditBusinessSocialLinks;
 use App\Livewire\Business\EditBusinessWhatsapp;
 use App\Http\Controllers\WhatsappRedirectController;
+use App\Http\Controllers\LinkRedirectController;
 use App\Http\Controllers\LocaleController;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
@@ -31,6 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
         Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
+        Route::get('/subscriptions', Subscriptions::class)->name('subscriptions');
+
 
         // Nuevas rutas para editar perfil y contraseña de usuario
         Route::get('users/{user}/edit/profile', EditUserProfile::class)->name('users.edit.profile');
@@ -73,12 +77,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
     Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
     Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
-
-    // Ruta para la redirección de enlaces personalizados de WhatsApp
-    Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
 });
 
 Route::get('locale/{lang}', [LocaleController::class, 'switch'])->name('locale.switch');
+
+// Rutas de redirección para enlaces con tracking (públicas)
+Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
+Route::get('/wa-link/{id}', [WhatsappRedirectController::class, 'redirectById'])->name('whatsapp.redirect.id');
 
 require __DIR__.'/auth.php';
 
