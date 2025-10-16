@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
         Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
-        Route::get('/subscriptions', Subscriptions::class)->name('subscriptions');
+       // Route::get('/subscriptions', Subscriptions::class)->name('subscriptions');
 
 
         // Nuevas rutas para editar perfil y contraseña de usuario
