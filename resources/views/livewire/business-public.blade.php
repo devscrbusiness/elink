@@ -72,7 +72,7 @@
                     @endphp
                     <a href="{{ $url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $wa->id }}, linkType: 'whatsapp' })" target="_blank" class="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-gray-200 font-bold py-3 px-4 rounded-full transition">
                         <x-icons.social.whatsapp class="w-6 h-6" />
-                        <span>{{ $wa->alias }}</span>
+                        <span class="select-none">{{ $wa->alias }}</span>
                     </a>
                 @endforeach
             </div>
@@ -107,7 +107,7 @@
                     <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" target="_blank"
                        class="flex items-center justify-center gap-2 py-3 px-4 rounded-full font-semibold text-gray-200 transition {{ $colorClass }}">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6 text-gray-200" />
-                        <span>{{ $displayText }}</span>
+                        <span class="select-none">{{ $displayText }}</span>
                     </a>
                 @endforeach
             </div>
@@ -127,7 +127,7 @@
                     @endphp
                     <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 dark:text-gray-200 font-bold py-3 px-4 rounded-full transition">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
-                        <span>{{ $link->alias ?: $displayEmail }}</span>
+                        <span class="select-none">{{ $link->alias ?: $displayEmail }}</span>
                     </a>
                 @endforeach
             </div>
@@ -149,7 +149,7 @@
                     @endphp
                     <a href="{{ $website->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $website->id }}, linkType: 'social' })" target="_blank" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 font-bold py-3 px-4 rounded-full transition">
                         <x-icons.social.website class="w-6 h-6" />
-                        <span>{{ $website->alias ?: $displayUrl }}</span>
+                        <span class="select-none">{{ $website->alias ?: $displayUrl }}</span>
                     </a>
                 @endforeach
             </div>
@@ -165,7 +165,7 @@
                 @foreach($others as $link)
                     <a href="{{ $link->url }}" wire:click.prevent="$dispatch('logClick', { linkId: {{ $link->id }}, linkType: 'social' })" target="_blank" class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full transition">
                         <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
-                        <span>{{ $link->alias }}</span>
+                        <span class="select-none">{{ $link->alias }}</span>
                     </a>
                 @endforeach
             </div>
