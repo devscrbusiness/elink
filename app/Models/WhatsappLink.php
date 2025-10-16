@@ -38,7 +38,7 @@ class WhatsappLink extends Model
                 $phoneNumber = preg_replace('/\D/', '', $this->phone_number);
                 $fullPhone = $this->country->phone_code . $phoneNumber;
 
-                $url = "https://wa.me/{$fullPhone}";
+                $url = "https://api.whatsapp.com/send?phone={$fullPhone}";
 
                 if ($this->greeting) {
                     return $url . '?text=' . urlencode($this->greeting);
