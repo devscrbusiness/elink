@@ -41,7 +41,7 @@ class WhatsappLink extends Model
                 $url = "https://api.whatsapp.com/send?phone={$fullPhone}";
 
                 if ($this->greeting) {
-                    return $url . '?text=' . urlencode($this->greeting);
+                    return $url . '&text=' . urlencode($this->greeting);
                 }
 
                 return $url;
