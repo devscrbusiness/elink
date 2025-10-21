@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Plan;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Validation\Rule;
@@ -19,12 +20,7 @@ class EditUserSubscription extends Component
     public function mount(User $user)
     {
         $this->user = $user;
-        // Definimos los planes directamente en el componente con su duración en meses.
-        $this->plans = [
-            ['id' => 1, 'name' => 'Anual', 'months' => 12],
-            ['id' => 2, 'name' => 'Semestral', 'months' => 6],
-            ['id' => 3, 'name' => 'Bianual', 'months' => 24],
-        ];
+        $this->plans = Plan::all();
 
         if ($subscription = $this->user->latestSubscription) {
             $this->plan_id = $subscription->plan_id;
@@ -45,13 +41,12 @@ class EditUserSubscription extends Component
             return;
         }
 
-        $plan = collect($this->plans)->firstWhere('id', $planId);
+        $plan = $this->plans->firstWhere('id', $planId);
         $startDate = Carbon::parse($this->starts_at);
 
-        if ($plan) {
+        // Solo calcula la fecha de fin si el plan tiene una duración en meses > 0
+        if ($plan && $plan->months > 0) {
             $this->ends_at = $startDate->copy()->addMonths($plan['months'])->format('Y-m-d');
-        } else {
-            $this->ends_at = null;
         }
     }
 
@@ -75,14 +70,13 @@ class EditUserSubscription extends Component
     {
         $validated = $this->validate();
 
-        $this->user->subscriptions()->updateOrCreate(
-            // Usamos un identificador único para la suscripción si el usuario solo puede tener una activa a la vez.
-            ['id' => $this->user->latestSubscription->id ?? null],
-            [
-                'starts_at' => $validated['starts_at'],
-                'ends_at' => $validated['ends_at'],
-            ]
-        );
+        // Usamos create() en lugar de updateOrCreate() para mantener un historial.
+        // Cada "guardado" genera un nuevo registro de suscripción.
+        $this->user->subscriptions()->create([
+            'plan_id' => $validated['plan_id'],
+            'starts_at' => $validated['starts_at'],
+            'ends_at' => $validated['ends_at'],
+        ]);
 
         session()->flash('message', __('admin.subscription_updated_success'));
         $this->redirect(route('admin.subscriptions'), navigate: true);
@@ -90,6 +84,13 @@ class EditUserSubscription extends Component
 
     public function render()
     {
-        return view('livewire.admin.edit-user-subscription');
+        $subscriptionHistory = $this->user->subscriptions()
+            ->with('plan')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('livewire.admin.edit-user-subscription', [
+            'subscriptionHistory' => $subscriptionHistory
+        ]);
     }
 }

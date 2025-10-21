@@ -58,7 +58,7 @@
 
                     @if ($user->latestSubscription)
                         <!-- Plan -->
-                        <div class="md:col-span-2 text-sm text-gray-500 dark:text-gray-300"><span class="md:hidden font-semibold text-gray-600 dark:text-gray-400">{{ __('admin.table_header_plan') }}: </span>{{ $user->latestSubscription->plan->name }}</div>
+                        <div class="md:col-span-2 text-sm text-gray-500 dark:text-gray-300"><span class="md:hidden font-semibold text-gray-600 dark:text-gray-400">{{ __('admin.table_header_plan') }}: </span>{{ $user->latestSubscription->plan->name ?? 'N/A' }}</div>
                         
                         <!-- Estado -->
                         <div class="md:col-span-2 text-left md:text-center">

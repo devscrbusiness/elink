@@ -67,4 +67,6 @@ return [
     'filter_all' => 'Todos',
     'filter_active' => 'Activas',
     'filter_expired' => 'Vencidas',
+    'subscription_history_title' => 'Historial de Suscripciones',
+    'plan_custom' => 'Personalizado',
 ];

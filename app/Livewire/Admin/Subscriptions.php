@@ -26,7 +26,7 @@ class Subscriptions extends Component
 
     public function render()
     {
-        $users = User::with(['business', 'latestSubscription.plan'])
+        $users = User::with(['business', 'latestSubscription'])
             ->when($this->query, function ($query) {
                 $query->where(function ($subQuery) {
                     $subQuery->where('name', 'like', "%{$this->query}%")

@@ -69,6 +69,11 @@ class User extends Authenticatable
         return $this->hasOne(Business::class);
     }
 
+        public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
         public function latestSubscription()
     {
         return $this->hasOne(Subscription::class)->latestOfMany();

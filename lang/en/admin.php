@@ -67,4 +67,6 @@ return [
     'filter_all' => 'All',
     'filter_active' => 'Active',
     'filter_expired' => 'Expired',
+    'subscription_history_title' => 'Subscription History',
+    'plan_custom' => 'Custom',
 ];

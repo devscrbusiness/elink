@@ -42,12 +42,12 @@ class CreateUser extends Component
             'user_id' => $user->id,
             'name' => $user->name, // Usar el nombre del usuario como nombre de la empresa por defecto
             'custom_link' => Business::generateUniqueCustomLink($user->name),
-            'is_active' => true,
         ]);
 
         // Crear la suscripción por 1 año.
         
         $user->subscriptions()->create([
+            'plan_id' => 1, // ID del plan Anual por defecto.
             'starts_at' => now(),
             'ends_at' => now()->addYear(),
         ]);

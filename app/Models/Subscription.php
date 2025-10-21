@@ -12,7 +12,7 @@ class Subscription extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'status', 'starts_at', 'ends_at',
+        'user_id', 'plan_id', 'status', 'starts_at', 'ends_at',
     ];
 
     protected $casts = [
@@ -23,5 +23,13 @@ class Subscription extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Obtiene el plan asociado a la suscripción.
+     */
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(Plan::class);
     }
 }

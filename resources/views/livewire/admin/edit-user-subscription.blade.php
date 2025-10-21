@@ -36,8 +36,13 @@
                 <!-- Fecha de Fin -->
                 <div>
                     <label for="ends_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('admin.table_header_end_date') }}</label>
+                    @php
+                        // El plan personalizado tendrá 'months' == 0.
+                        $selectedPlan = $plans->firstWhere('id', $plan_id);
+                        $isCustomPlan = $selectedPlan && $selectedPlan->months === 0;
+                    @endphp
                     <input wire:model.lazy="ends_at" type="date" id="ends_at"
-                           class="mt-1 block w-full px-4 py-3 text-gray-900 bg-gray-100 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white dark:border-zinc-600">
+                           class="mt-1 block w-full px-4 py-3 text-gray-900 bg-gray-100 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white dark:border-zinc-600 {{ !$isCustomPlan ? 'cursor-not-allowed bg-gray-200 dark:bg-zinc-800' : '' }}" {{ !$isCustomPlan ? 'readonly' : '' }}>
                     @error('ends_at') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
                 </div>
 
@@ -49,5 +54,53 @@
                 </div>
             </form>
         </div>
+
+        {{-- Historial de Suscripciones --}}
+        @if($subscriptionHistory->count() > 0)
+            <div class="mt-12 w-full max-w-4xl mx-auto">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('admin.subscription_history_title') }}</h3>
+                <div class="mt-4 flow-root">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <table class="min-w-full divide-y divide-gray-300 dark:divide-zinc-700">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-0">{{ __('admin.table_header_plan') }}</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('admin.table_header_start_date') }}</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('admin.table_header_end_date') }}</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('admin.table_header_status') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-zinc-800">
+                                @foreach($subscriptionHistory as $subscription)
+                                    <tr>
+                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-0">{{ $subscription->plan->name ?? 'N/A' }}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{ $subscription->starts_at->format('d/m/Y') }}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{ $subscription->ends_at ? $subscription->ends_at->format('d/m/Y') : 'N/A' }}</td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+                                            @php
+                                                $status = 'expired';
+                                                if (!$subscription->ends_at || $subscription->ends_at->isFuture()) {
+                                                    $status = 'active';
+                                                }
+                                                $statusClass = match($status) {
+                                                    'active' => 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+                                                    'expired' => 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+                                                    default => 'bg-gray-100 text-gray-800 dark:bg-gray-900/50 dark:text-gray-300',
+                                                };
+                                            @endphp
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                                {{ __('admin.status_' . $status) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </x-admin.layout>
