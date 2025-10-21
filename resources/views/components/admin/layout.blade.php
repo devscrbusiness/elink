@@ -22,6 +22,12 @@
                 <flux:navlist.item :href="route('admin.users.edit.password', $user)" :current="request()->routeIs('admin.users.edit.password')" wire:navigate>
                     {{ __('admin.user_password_nav') }}
                 </flux:navlist.item>
+                <flux:navlist.item :href="route('admin.users.edit.role', $user)" :current="request()->routeIs('admin.users.edit.role')" wire:navigate>
+                    {{ __('admin.user_role_nav') }}
+                </flux:navlist.item>
+                <flux:navlist.item :href="route('admin.users.edit.subscription', $user)" :current="request()->routeIs('admin.users.edit.subscription')" wire:navigate>
+                    {{ __('admin.subscriptions_navigation') }}
+                </flux:navlist.item>
             </flux:navlist>
 
             @if($business)

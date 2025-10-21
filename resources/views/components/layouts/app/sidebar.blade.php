@@ -25,11 +25,13 @@
                         <flux:navlist.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users') || $isEditingOtherUserBusiness || $isEditingOtherUserProfile" wire:navigate>
                             {{ __('admin.users_navigation') }}
                         </flux:navlist.item>
+                        <flux:navlist.item icon="credit-card" :href="route('admin.subscriptions')" :current="request()->routeIs('admin.subscriptions')" wire:navigate>
+                            {{ __('admin.subscriptions_navigation') }}
+                        </flux:navlist.item>
                     </flux:navlist.group>
                 @endif
 
                 @php
-                    // Asumimos que el usuario tiene una relación 'business'
                     $business = auth()->user()->business;
                 @endphp
 

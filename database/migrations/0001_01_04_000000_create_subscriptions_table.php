@@ -10,11 +10,10 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->constrained()->onDelete('cascade');
-            $table->string('plan'); // Nombre del plan
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('status')->default('active'); // p.ej. active, cancelled, expired
             $table->timestamp('starts_at');
             $table->timestamp('ends_at')->nullable();
-            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

@@ -45,6 +45,13 @@ class CreateUser extends Component
             'is_active' => true,
         ]);
 
+        // Crear la suscripción por 1 año.
+        
+        $user->subscriptions()->create([
+            'starts_at' => now(),
+            'ends_at' => now()->addYear(),
+        ]);
+
         // Usaremos una notificación flash en la sesión para mostrar en la siguiente página.
         session()->flash('notification', ['text' => __('admin.user_created_success'), 'type' => 'success']);
 

@@ -1,6 +1,8 @@
 <?php
 
+use App\Livewire\Admin\EditUserRole;
 use App\Livewire\Admin\EditUserPassword;
+use App\Livewire\Admin\EditUserSubscription;
 use App\Livewire\Admin\EditUserProfile;
 use App\Livewire\BusinessPublic;
 use App\Livewire\Admin\UserList;
@@ -33,12 +35,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
         Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
-       // Route::get('/subscriptions', Subscriptions::class)->name('subscriptions');
+        Route::get('/subscriptions', Subscriptions::class)->name('subscriptions');
 
 
         // Nuevas rutas para editar perfil y contraseña de usuario
         Route::get('users/{user}/edit/profile', EditUserProfile::class)->name('users.edit.profile');
         Route::get('users/{user}/edit/password', EditUserPassword::class)->name('users.edit.password');
+        Route::get('users/{user}/edit/role', EditUserRole::class)->name('users.edit.role');
+        Route::get('/users/{user}/edit/subscription', EditUserSubscription::class)->name('users.edit.subscription');
         Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
         Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
     });
