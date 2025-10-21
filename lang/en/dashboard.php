@@ -18,4 +18,9 @@ return [
     'link_copied' => 'Link copied!',
     'visits' => 'Visits',
     'clicks' => 'Clicks',
+    'share_button' => 'Share',
+    'share_modal_title' => 'Share your profile',
+    'share_modal_subtitle' => 'Make more people know your profile by sharing it on your social networks.',
+    'share_on' => 'Share on :network',
+    'share_profile' => 'Share profile',
 ];

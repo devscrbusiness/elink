@@ -23,14 +23,21 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-6 flex flex-wrap gap-2">
+            <div class="mt-6 flex flex-wrap gap-3">
                 <a href="{{ route('business.public', $business->custom_link) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
                     <x-icon name="eye" class="w-4 h-4" />
                     {{ __('dashboard.view_public_profile') }}
                 </a>
-                <a href="{{ route('business.edit.data', $business) }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
+                <flux:modal.trigger name="share-profile-modal">
+                    <button class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
+                        <x-icon name="share" class="w-4 h-4" />
+                        {{ __('dashboard.share_button') }}
+                    </button>
+                </flux:modal.trigger>
+
+                <a href="{{ route('business.edit.data', $business) }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600" title="{{ __('dashboard.edit_information') }}">
                     <x-icon name="pencil" class="w-4 h-4" />
-                    {{ __('dashboard.edit_information') }}
+                    <span class="sr-only">{{ __('dashboard.edit_information') }}</span>
                 </a>
                 <a href="{{ route('business.edit.social-links', $business) }}" wire:navigate class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
                     <x-icon name="plus" class="w-4 h-4" />
@@ -106,6 +113,48 @@
         :class="{ 'bg-green-500': type === 'success', 'bg-red-500': type === 'error' }">
         <p x-text="text"></p>
     </div>
+
+    {{-- Modal para compartir --}}
+    @php
+        $publicUrl = route('business.public', $business->custom_link);
+        $shareText = urlencode("¡Mira mi perfil en eLink! " . $publicUrl);
+        $shareUrl = urlencode($publicUrl);
+
+        $shareLinks = [
+            'WhatsApp' => "https://api.whatsapp.com/send?text={$shareText}",
+            'Facebook' => "https://www.facebook.com/sharer/sharer.php?u={$shareUrl}",
+            'X' => "https://twitter.com/intent/tweet?url={$shareUrl}&text={$shareText}",
+            'Telegram' => "https://t.me/share/url?url={$shareUrl}&text={$shareText}",
+            'LinkedIn' => "https://www.linkedin.com/shareArticle?mini=true&url={$shareUrl}",
+        ];
+
+        $socialColors = [
+            'WhatsApp' => 'bg-green-500 hover:bg-green-600',
+            'Facebook' => 'bg-blue-600 hover:bg-blue-700',
+            'X' => 'bg-black hover:bg-zinc-800',
+            'Telegram' => 'bg-sky-500 hover:bg-sky-600',
+            'LinkedIn' => 'bg-sky-700 hover:bg-sky-800',
+        ];
+    @endphp
+    <flux:modal name="share-profile-modal" class="min-w-[24rem]">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ __('dashboard.share_modal_title') }}</flux:heading>
+                <flux:text class="mt-2">
+                    <p>{{ __('dashboard.share_modal_subtitle') }}</p>
+                </flux:text>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                @foreach($shareLinks as $network => $link)
+                    <a href="{{ $link }}" target="_blank"
+                       class="flex items-center justify-center gap-3 py-3 px-4 rounded-full font-semibold text-white transition {{ $socialColors[$network] ?? 'bg-gray-500 hover:bg-gray-600' }}">
+                        <x-dynamic-component :component="'icons.social.' . strtolower($network)" class="w-6 h-6" />
+                        <span>{{ __('dashboard.share_on', ['network' => $network]) }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    </flux:modal>
 
     @push('scripts')
     <script>

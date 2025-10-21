@@ -18,4 +18,9 @@ return [
     'link_copied' => '¡Enlace copiado!',
     'visits' => 'Visitas',
     'clicks' => 'Clics',
+    'share_button' => 'Compartir',
+    'share_modal_title' => 'Comparte tu perfil',
+    'share_modal_subtitle' => 'Haz que más personas conozcan tu perfil compartiéndolo en tus redes sociales.',
+    'share_on' => 'Compartir en :network',
+    'share_profile' => 'Compartir perfil',
 ];
