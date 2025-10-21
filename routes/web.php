@@ -9,6 +9,7 @@ use App\Livewire\Admin\UserList;
 use App\Livewire\Admin\Subscriptions;
 use App\Livewire\Business\EditBusinessData;
 use App\Livewire\Business\EditBusinessLocation;
+use App\Livewire\Business\EditBusinessDocuments;
 use App\Livewire\Business\EditBusinessSocialLinks;
 use App\Livewire\Business\EditBusinessWhatsapp;
 use App\Http\Controllers\WhatsappRedirectController;
@@ -45,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users/{user}/edit/subscription', EditUserSubscription::class)->name('users.edit.subscription');
         Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
         Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
+        Route::get('business/{business}/edit/documents', EditBusinessDocuments::class)->name('business.edit.documents');
     });
 
     // Rutas solo para Usuarios (rol = 2)
@@ -81,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
     Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
     Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
+    Route::get('business/{business}/edit/documents', EditBusinessDocuments::class)->name('business.edit.documents');
 });
 
 Route::get('locale/{lang}', [LocaleController::class, 'switch'])->name('locale.switch');

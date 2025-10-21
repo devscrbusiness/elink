@@ -47,6 +47,9 @@
                     <flux:navlist.item :href="route('admin.business.edit.social-links', $business)" :current="request()->routeIs('admin.business.edit.social-links')" wire:navigate>
                         {{ __('edit-business.social_links_nav') }}
                     </flux:navlist.item>
+                    <flux:navlist.item :href="route('admin.business.edit.documents', $business)" :current="request()->routeIs('admin.business.edit.documents')" wire:navigate>
+                        {{ __('edit-business.documents_nav') }}
+                    </flux:navlist.item>
                 </flux:navlist>
             @endif
         </div>

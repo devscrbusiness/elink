@@ -63,6 +63,14 @@ class Business extends Model
     }
 
     /**
+     * Get the documents for the business.
+     */
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    /**
      * Generate a unique custom link from a business name.
      *
      * @param string $name

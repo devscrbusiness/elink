@@ -180,6 +180,22 @@
         <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
     @endif
 
+    {{-- Documentos --}}
+    @if($business->documents->count())
+        <div class="p-6">
+            <h2 class="font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.documents_title') }}</h2>
+            <div class="flex flex-col gap-3">
+                @foreach($business->documents as $document)
+                    <a href="{{ asset('storage/' . $document->path) }}" target="_blank"
+                       class="flex items-center justify-center gap-3 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-800 dark:text-gray-200 font-bold py-3 px-4 rounded-full transition">
+                        <x-icon name="document-text" class="w-6 h-6" />
+                        <span class="select-none">{{ $document->name }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Ubicación --}}
     @if ($location)
         <div class="p-6">

@@ -54,6 +54,9 @@
                             wire:navigate>
                             {{ __('edit-business.location_nav') }}
                         </flux:navlist.item>
+                        <flux:navlist.item icon="document-text" :href="route('business.edit.documents', $business)" :current="request()->routeIs('business.edit.documents') && $isEditingOwnBusiness" wire:navigate>
+                            {{ __('edit-business.documents_nav') }}
+                        </flux:navlist.item>
                     </flux:navlist.group>
                 @endif
             </flux:navlist>
