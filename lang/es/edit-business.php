@@ -58,4 +58,5 @@ return [
     'location_title' => 'Ubicación',
     'visit_website_button' => 'Visita nuestro sitio web',
     'website_title' => 'Sitio Web|Sitios Web',
+    'view_on_google_maps' => 'Ver en Google Maps',
 ];

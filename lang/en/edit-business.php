@@ -58,4 +58,5 @@ return [
     'location_title' => 'Location',
     'visit_website_button' => 'Visit our website',
     'website_title' => 'Website|Websites',
+    'view_on_google_maps' => 'View on Google Maps',
 ];

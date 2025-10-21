@@ -180,7 +180,7 @@
             @if($location->detail)
                 <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">{{ $location->detail }}</p>
             @endif
-            <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700">
+            <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700 relative group">
                 <iframe
                     width="100%"
                     height="220"
@@ -191,6 +191,11 @@
                     aria-hidden="false"
                     tabindex="0"
                 ></iframe>
+                <a href="https://www.google.com/maps/search/?api=1&query={{ $location->latitude }},{{ $location->longitude }}" target="_blank" rel="noopener noreferrer"
+                   class="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900/80 dark:backdrop-blur-sm text-gray-800 dark:text-gray-200 font-semibold text-sm rounded-full shadow-md border border-gray-200 dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all">
+                    <x-icon name="map-pin" class="w-4 h-4" />
+                    {{ __('edit-business.view_on_google_maps') }}
+                </a>
             </div>
         </div>
     @endif
