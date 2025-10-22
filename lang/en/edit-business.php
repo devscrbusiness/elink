@@ -70,4 +70,7 @@ return [
     'document_update_success' => 'Document name updated successfully!',
     'edit_button' => 'Edit',
     'no_documents' => 'You have not uploaded any documents yet.',
+    'delete_location_button' => 'Delete Location',
+    'location_delete_confirmation' => 'Are you sure you want to delete this location? This action will delete the coordinates and address details',
+    'location_delete_success' => 'Location deleted successfully!',
 ];

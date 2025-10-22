@@ -65,6 +65,19 @@ class EditBusinessLocation extends Component
         session()->flash('message', __('edit-business.location_update_success'));
     }
 
+     /**
+     * Elimina la información de ubicación de la empresa.
+     */
+    public function deleteLocation()
+    {
+        if ($this->business->location) {
+            $this->business->location->delete();
+        }
+        
+        session()->flash('message', __('edit-business.location_delete_success'));
+        return $this->redirect(route('business.edit.location', ['business' => $this->business, 'isAdminEditing' => $this->isAdminEditing]), navigate: true);
+    }
+
     public function render()
     {
         return view('livewire.edit-business-location', [

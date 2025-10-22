@@ -70,4 +70,7 @@ return [
     'document_update_success' => '¡Nombre del documento actualizado con éxito!',
     'edit_button' => 'Editar',
     'no_documents' => 'Aún no has subido ningún documento.',
+    'delete_location_button' => 'Eliminar Ubicación',
+    'location_delete_confirmation' => '¿Estás seguro de que quieres eliminar la ubicación? Esta acción borrará las coordenadas y los detalles de la dirección.',
+    'location_delete_success' => '¡Ubicación eliminada con éxito!',
 ];

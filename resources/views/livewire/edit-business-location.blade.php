@@ -43,13 +43,32 @@
                 @error('detail') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end items-center gap-4">
+                <flux:modal.trigger name="delete-location-modal">
+                    <button type="button" class="text-sm font-semibold text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400">
+                        {{ __('edit-business.delete_location_button') }}
+                    </button>
+                </flux:modal.trigger>
+
                 <button type="submit" class="px-6 py-3 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     {{ __('edit-business.save_button') }}
                     <div wire:loading wire:target="save" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
                 </button>
             </div>
         </form>
+
+        <flux:modal name="delete-location-modal" class="min-w-[22rem]">
+            <div class="space-y-6">
+                <flux:heading size="lg">{{ __('edit-business.delete_location_button') }}</flux:heading>
+                <flux:text class="mt-2">{{ __('edit-business.location_delete_confirmation') }}</flux:text>
+                <div class="flex justify-end gap-2">
+                    <flux:modal.close>
+                        <flux:button variant="ghost">{{ __('admin.cancel_button') }}</flux:button>
+                    </flux:modal.close>
+                    <flux:button variant="danger" wire:click="deleteLocation">{{ __('admin.confirm_delete_button') }}</flux:button>
+                </div>
+            </div>
+        </flux:modal>
     </div>
 </x-dynamic-component>
 
