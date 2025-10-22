@@ -15,7 +15,7 @@
             @endif
 
             {{-- Formulario para añadir nuevo documento --}}
-            <form wire:submit.prevent="saveDocument" class="mt-8 p-6 border border-dashed border-gray-300 dark:border-zinc-600 rounded-lg">
+            <form wire:submit.prevent="saveDocument" enctype="multipart/form-data" class="mt-8 p-6 border border-dashed border-gray-300 dark:border-zinc-600 rounded-lg">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="documentName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('edit-business.document_name_label') }}</label>
