@@ -27,7 +27,6 @@ class BusinessPublic extends Component
     public Collection $mails;
     public Collection $websites;
     public Collection $others;
-    public ?Location $location = null; // Se inicializa como null y se hace nullable
 
     /**
      * Mount the component with the business instance.
@@ -39,12 +38,11 @@ class BusinessPublic extends Component
 
         $this->business = $business->load(['whatsappLinks' => function ($query) {
             $query->where('is_public', true)->orderBy('position');
-        }, 'socialLinks' => function ($query) {
+        }, 'socialLinks' => function ($query) { // Carga de enlaces sociales
             $query->where('is_public', true)->orderBy('position');
-        }, 'location']);
+        }, 'locations']); // Carga la nueva relación 'locations'
 
         $this->whatsapps = $this->business->whatsappLinks;
-        $this->location = $this->business->location;
 
         $this->prepareLinks();
     }

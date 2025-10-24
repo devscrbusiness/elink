@@ -197,28 +197,16 @@
     @endif
 
     {{-- Ubicación --}}
-    @if ($location)
+    @if ($business->locations->count() > 0)
         <div class="p-6">
-            <h2 class="font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.location_title') }}</h2>
-            @if($location->detail)
-                <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">{{ $location->detail }}</p>
-            @endif
-            <div class="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700 relative group">
-                <iframe
-                    width="100%"
-                    height="220"
-                    frameborder="0"
-                    style="border:0"
-                    src="https://www.google.com/maps?q={{ $location->latitude }},{{ $location->longitude }}&hl=es&z=16&output=embed"
-                    allowfullscreen
-                    aria-hidden="false"
-                    tabindex="0"
-                ></iframe>
-                <a href="https://www.google.com/maps/search/?api=1&query={{ $location->latitude }},{{ $location->longitude }}" target="_blank" rel="noopener noreferrer"
-                   class="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900/80 dark:backdrop-blur-sm text-gray-800 dark:text-gray-200 font-semibold text-sm rounded-full shadow-md border border-gray-200 dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all">
-                    <x-icon name="map-pin" class="w-4 h-4" />
-                    {{ __('edit-business.view_on_google_maps') }}
-                </a>
+            <h2 class="font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ trans_choice('edit-business.location_title', $business->locations->count()) }}</h2>
+            @foreach($business->locations as $location)
+                @if($location->detail)
+                    <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-2">{{ $location->detail }}</p>
+                @endif
+            @endforeach
+            <div wire:ignore x-data="multiLocationMap(@js($business->locations))" x-init="initMap()" class="my-6">
+                <div x-ref="map" style="height: 350px; border-radius: 0.5rem;" class="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700"></div>
             </div>
         </div>
     @endif
@@ -271,3 +259,57 @@
         </div>
     </flux:modal>
 </div>
+
+@push('scripts')
+<script data-navigate-once>
+    function multiLocationMap(locations) {
+        return {
+            map: null,
+            markers: [],
+            locations: locations,
+
+            initMap() {
+                this.loadGoogleMaps().then(() => {
+                    this.initializeMap();
+                });
+            },
+
+            loadGoogleMaps() {
+                return new Promise((resolve) => {
+                    if (window.google && window.google.maps) {
+                        return resolve();
+                    }
+                    window.initMapCallback = () => resolve();
+                    const script = document.createElement('script');
+                    script.src = `https://maps.googleapis.com/maps/api/js?key={{ config('services.google_maps.key') }}&callback=initMapCallback`;
+                    script.async = true;
+                    script.defer = true;
+                    document.head.appendChild(script);
+                });
+            },
+
+            initializeMap() {
+                if (this.locations.length === 0) return;
+
+                const bounds = new google.maps.LatLngBounds();
+                this.map = new google.maps.Map(this.$refs.map, {
+                    mapTypeId: 'roadmap',
+                });
+
+                this.locations.forEach(locationData => {
+                    const position = { lat: parseFloat(locationData.latitude), lng: parseFloat(locationData.longitude) };
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: this.map,
+                        title: locationData.detail || '{{ $business->name }}'
+                    });
+
+                    bounds.extend(marker.getPosition());
+                });
+
+                this.map.fitBounds(bounds);
+            }
+        }
+    }
+</script>
+@endpush

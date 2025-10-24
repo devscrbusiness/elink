@@ -57,9 +57,9 @@ class Business extends Model
     /**
      * Get the location for the business.
      */
-    public function location()
+    public function locations(): HasMany
     {
-        return $this->hasOne(Location::class);
+        return $this->hasMany(Location::class);
     }
 
     /**

@@ -73,4 +73,8 @@ return [
     'delete_location_button' => 'Delete Location',
     'location_delete_confirmation' => 'Are you sure you want to delete this location? This action will delete the coordinates and address details',
     'location_delete_success' => 'Location deleted successfully!',
+    'add_location_button' => 'Add Location',
+    'edit_location_heading' => 'Editing Location',
+    'location_no_detail' => 'Location without detail',
+    'no_locations_added' => 'You have not added any locations yet.',
 ];

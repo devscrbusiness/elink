@@ -18,8 +18,15 @@
             </div>
         @endif
 
-        <form wire:submit.prevent="save" class="mt-8 space-y-6">
-            <div x-data="mapManager($wire.latitude, $wire.longitude)" class="my-6">
+        <div class="mt-8 space-y-6 border-b dark:border-zinc-700 pb-8 mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                {{ is_null($editingIndex) ? __('edit-business.add_location_button') : __('edit-business.edit_location_heading') }}
+            </h3>
+
+            <div x-data="mapManager(@js($editingLocation['latitude']), @js($editingLocation['longitude']))"
+                 x-init="init()"
+                 @location-selected.window="updateMarker($event.detail.latitude, $event.detail.longitude)"
+                 class="my-6">
                 <!-- Search Input -->
                 <div class="mb-4">
                     <input x-ref="searchBox" type="text" placeholder="{{ __('map.search_location_placeholder') }}"
@@ -30,45 +37,48 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     {{ __('edit-business.location_map_label') }}
                 </label>
-                <div wire:ignore x-ref="map" id="map" style="height: 350px; border-radius: 0.5rem;"></div>
-                @error('latitude') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
-                @error('longitude') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                <div wire:ignore x-ref="map" style="height: 350px; border-radius: 0.5rem;"></div>
+                @error('editingLocation.latitude') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                @error('editingLocation.longitude') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
             </div>
 
             <!-- Detail -->
             <div>
-                <label for="detail" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('edit-business.location_detail_label') }}</label>
-                <textarea wire:model.lazy="detail" id="detail" rows="4" placeholder="{{ __('edit-business.location_detail_placeholder') }}"
-                          class="mt-1 block w-full px-4 py-3 text-gray-900 bg-gray-100 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white dark:border-zinc-600"></textarea>
-                @error('detail') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                <flux:input wire:model.lazy="editingLocation.detail" id="detail" type="textarea" :label="__('edit-business.location_detail_label')" :placeholder="__('edit-business.location_detail_placeholder')" />
+                @error('editingLocation.detail') <span class="text-sm text-red-500">{{ $message }}</span> @enderror
             </div>
 
-            <div class="flex justify-end items-center gap-4">
-                <flux:modal.trigger name="delete-location-modal">
-                    <button type="button" class="text-sm font-semibold text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400">
-                        {{ __('edit-business.delete_location_button') }}
+            <div class="flex justify-end space-x-4">
+                @if(!is_null($editingIndex))
+                    <button type="button" wire:click="prepareNewLocation" class="px-6 py-3 font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-600 dark:text-gray-200 dark:hover:bg-zinc-500">
+                        {{ __('edit-business.cancel_button') }}
                     </button>
-                </flux:modal.trigger>
-
-                <button type="submit" class="px-6 py-3 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    {{ __('edit-business.save_button') }}
-                    <div wire:loading wire:target="save" class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
+                @endif
+                <button type="button" wire:click="saveLocation" class="px-6 py-3 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {{ is_null($editingIndex) ? __('edit-business.add_location_button') : __('edit-business.save_button') }}
                 </button>
             </div>
-        </form>
+        </div>
 
-        <flux:modal name="delete-location-modal" class="min-w-[22rem]">
-            <div class="space-y-6">
-                <flux:heading size="lg">{{ __('edit-business.delete_location_button') }}</flux:heading>
-                <flux:text class="mt-2">{{ __('edit-business.location_delete_confirmation') }}</flux:text>
-                <div class="flex justify-end gap-2">
-                    <flux:modal.close>
-                        <flux:button variant="ghost">{{ __('admin.cancel_button') }}</flux:button>
-                    </flux:modal.close>
-                    <flux:button variant="danger" wire:click="deleteLocation">{{ __('admin.confirm_delete_button') }}</flux:button>
+        <!-- Lista de ubicaciones -->
+        <div class="space-y-4">
+            @forelse($locations as $index => $location)
+                <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-zinc-900/50 group">
+                    <div class="flex items-center gap-3">
+                        <x-icon name="map-pin" class="w-6 h-6 text-gray-400" />
+                        <span class="font-medium text-gray-800 dark:text-gray-200">{{ $location['detail'] ?: __('edit-business.location_no_detail') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button wire:click="selectForEditing({{ $index }})" class="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="{{ __('edit-business.edit_button') }}"><x-icon name="pencil" class="w-5 h-5" /></button>
+                        <button wire:click="removeLocation({{ $location['id'] }})" wire:confirm="{{ __('edit-business.location_delete_confirmation') }}" class="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors" title="{{ __('edit-business.delete_button') }}"><x-icon name="trash" class="w-5 h-5" /></button>
+                    </div>
                 </div>
-            </div>
-        </flux:modal>
+            @empty
+                <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                    {{ __('edit-business.no_locations_added') }}
+                </div>
+            @endforelse
+        </div>
     </div>
 </x-dynamic-component>
 
@@ -109,12 +119,12 @@
                     });
                     this.map.addListener('click', (e) => {
                         this.marker.setPosition(e.latLng);
-                        this.$wire.set('latitude', e.latLng.lat());
-                        this.$wire.set('longitude', e.latLng.lng());
+                        this.$wire.set(`editingLocation.latitude`, e.latLng.lat());
+                        this.$wire.set(`editingLocation.longitude`, e.latLng.lng());
                     });
                     this.marker.addListener('dragend', (e) => {
-                        this.$wire.set('latitude', e.latLng.lat());
-                        this.$wire.set('longitude', e.latLng.lng());
+                        this.$wire.set(`editingLocation.latitude`, e.latLng.lat());
+                        this.$wire.set(`editingLocation.longitude`, e.latLng.lng());
                     });
 
                     // Search Box
@@ -134,10 +144,15 @@
                         }
                         this.map.setCenter(place.geometry.location);
                         this.marker.setPosition(place.geometry.location);
-                        this.$wire.set('latitude', place.geometry.location.lat());
-                        this.$wire.set('longitude', place.geometry.location.lng());
+                        this.$wire.set(`editingLocation.latitude`, place.geometry.location.lat());
+                        this.$wire.set(`editingLocation.longitude`, place.geometry.location.lng());
                     });
-                }
+                },
+                updateMarker(lat, lng) {
+                    const newPosition = new google.maps.LatLng(lat, lng);
+                    this.marker.setPosition(newPosition);
+                    this.map.setCenter(newPosition);
+                },
             }
         }
     </script>
