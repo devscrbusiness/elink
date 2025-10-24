@@ -23,4 +23,9 @@ return [
     'share_modal_subtitle' => 'Haz que más personas conozcan tu perfil compartiéndolo en tus redes sociales.',
     'share_on' => 'Compartir en :network',
     'share_profile' => 'Compartir perfil',
+    'copy_qr' => 'Copiar',
+    'download_qr' => 'Descargar',
+    'qr_copied' => '¡Código QR copiado al portapapeles!',
+    'qr_copy_failed' => 'No se pudo copiar el código QR. Tu navegador podría no soportar esta función o no se concedieron los permisos.',
+    'qr_processing_error' => 'Ocurrió un error al procesar el código QR.',
 ];

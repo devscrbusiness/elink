@@ -23,4 +23,9 @@ return [
     'share_modal_subtitle' => 'Make more people know your profile by sharing it on your social networks.',
     'share_on' => 'Share on :network',
     'share_profile' => 'Share profile',
+    'copy_qr' => 'Copy',
+    'download_qr' => 'Download',
+    'qr_copied' => 'QR code copied to clipboard!',
+    'qr_copy_failed' => 'Failed to copy QR code. Your browser might not support this feature or permissions were denied.',
+    'qr_processing_error' => 'An error occurred while processing the QR code.',
 ];

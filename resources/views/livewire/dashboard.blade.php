@@ -47,12 +47,76 @@
         </div>
 
         {{-- Tarjeta de Código QR --}}
-        <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col items-center justify-center">
-            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">{{ __('dashboard.qr_code') }}</h3>
-            <div class="p-2 bg-white rounded-lg">
+        <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col items-center justify-center" x-data="{
+                async processQrCode(action) {
+                    const svgContent = new XMLSerializer().serializeToString(this.$refs.qrCodeSvg.querySelector('svg'));
+                    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+                    const svgUrl = URL.createObjectURL(svgBlob);
+
+                    const img = new Image();
+                    img.onload = async () => {
+                        const canvas = document.createElement('canvas');
+                        const size = 500; // Define un tamaño consistente para el PNG
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#FFFFFF'; // Fondo blanco para el código QR
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        URL.revokeObjectURL(svgUrl); // Limpia la URL del objeto SVG
+
+                        if (action === 'copy') {
+                            canvas.toBlob(async (pngBlob) => {
+                                try {
+                                    // Verifica si la API ClipboardItem es compatible
+                                    if (navigator.clipboard && navigator.clipboard.write) {
+                                        await navigator.clipboard.write([
+                                            new ClipboardItem({ 'image/png': pngBlob })
+                                        ]);
+                                        this.$dispatch('open-notification', { text: '{{ __('dashboard.qr_copied') }}', type: 'success' });
+                                    } else {
+                                        // Fallback para navegadores que no soportan ClipboardItem para imágenes
+                                        this.$dispatch('open-notification', { text: '{{ __('dashboard.qr_copy_failed') }}', type: 'error' });
+                                        console.warn('ClipboardItem API for images not supported or permission denied.');
+                                    }
+                                } catch (e) {
+                                    this.$dispatch('open-notification', { text: '{{ __('dashboard.qr_copy_failed') }}', type: 'error' });
+                                    console.error('Failed to copy QR code image:', e);
+                                }
+                            }, 'image/png');
+                        } else if (action === 'download') {
+                            const pngUrl = canvas.toDataURL('image/png');
+                            const link = document.createElement('a');
+                            link.href = pngUrl;
+                            link.download = 'qr-code-{{ Str::slug($business->name) }}.png';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    };
+                    img.onerror = (e) => {
+                        console.error('Error loading SVG for canvas conversion:', e);
+                        this.$dispatch('open-notification', { text: '{{ __('dashboard.qr_processing_error') }}', type: 'error' });
+                    };
+                    img.src = svgUrl;
+                }
+            }">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2 text-center">{{ __('dashboard.qr_code') }}</h3>
+            <div class="p-2 bg-white rounded-lg" x-ref="qrCodeSvg">
                 {!! $qrCode !!}
             </div>
-            <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">{{ __('dashboard.scan_to_visit') }}</p>
+            <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-2 max-w-xs">{{ __('dashboard.scan_to_visit') }}</p>
+            <div class="mt-4 flex justify-center gap-2">
+                <button @click="processQrCode('copy')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
+                    <x-icon name="clipboard-document" class="w-4 h-4" />
+                    {{ __('dashboard.copy_qr') }}
+                </button>
+                <button @click="processQrCode('download')" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-zinc-700 dark:text-gray-200 dark:hover:bg-zinc-600">
+                    <x-icon name="arrow-down-tray" class="w-4 h-4" />
+                    {{ __('dashboard.download_qr') }}
+                </button>
+            </div>
         </div>
     </div>
 
