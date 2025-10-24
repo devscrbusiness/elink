@@ -7,6 +7,11 @@
         {{ $slot }}
 
         @fluxScripts
+
+        <footer class="p-4 text-center text-gray-500 dark:text-gray-400">
+            © {{ date('Y') }} eLink - <img src="{{ asset('elinklogo.svg') }}" alt="eLink Logo" class="w-24 inline">
+        </footer>
+
         @stack('scripts')
     </body>
 </html>
