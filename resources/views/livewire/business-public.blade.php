@@ -198,15 +198,29 @@
 
     {{-- Ubicación --}}
     @if ($business->locations->count() > 0)
-        <div class="p-6">
+        <div class="p-6" x-data="multiLocationMap(@js($business->locations))" x-init="initMap()">
             <h2 class="font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ trans_choice('edit-business.location_title', $business->locations->count()) }}</h2>
-            @foreach($business->locations as $location)
-                @if($location->detail)
-                    <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-2">{{ $location->detail }}</p>
-                @endif
-            @endforeach
-            <div wire:ignore x-data="multiLocationMap(@js($business->locations))" x-init="initMap()" class="my-6">
+            
+            <div wire:ignore class="my-6">
                 <div x-ref="map" style="height: 350px; border-radius: 0.5rem;" class="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700"></div>
+            </div>
+
+            <div class="space-y-2">
+                @foreach($business->locations as $index => $location)
+                    <div @click="selectLocation({{ $index }})" 
+                         class="p-3 rounded-lg cursor-pointer transition flex items-center justify-between"
+                         :class="{ 'bg-blue-100 dark:bg-blue-900/50 ring-2 ring-blue-500': selectedLocationIndex === {{ $index }}, 'bg-gray-50 dark:bg-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-700': selectedLocationIndex !== {{ $index }} }">
+                        <div class="flex items-center gap-3">
+                            <x-icon name="map-pin" class="w-5 h-5 text-gray-400" />
+                            <p class="font-medium text-gray-800 dark:text-gray-200">{{ $location->detail ?: __('edit-business.location_no_detail') }}</p>
+                        </div>
+                    </div>
+            @endforeach
+            <div class="mt-4" x-show="selectedLocationIndex !== null" x-cloak>
+                <a :href="googleMapsUrl" target="_blank" class="flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-full transition w-full">
+                    <x-icon name="map" class="w-6 h-6" />
+                    <span class="select-none">{{ __('edit-business.view_on_google_maps') }}</span>
+                </a>
             </div>
         </div>
     @endif
@@ -267,6 +281,8 @@
             map: null,
             markers: [],
             locations: locations,
+            selectedLocationIndex: null,
+            googleMapsUrl: '',
 
             initMap() {
                 this.loadGoogleMaps().then(() => {
@@ -292,22 +308,43 @@
                 if (this.locations.length === 0) return;
 
                 const bounds = new google.maps.LatLngBounds();
+                
                 this.map = new google.maps.Map(this.$refs.map, {
                     mapTypeId: 'roadmap',
                 });
 
-                this.locations.forEach(locationData => {
+                this.locations.forEach((locationData, index) => {
                     const position = { lat: parseFloat(locationData.latitude), lng: parseFloat(locationData.longitude) };
                     const marker = new google.maps.Marker({
                         position: position,
                         map: this.map,
-                        title: locationData.detail || '{{ $business->name }}'
+                        title: locationData.detail || '{{ $business->name }}',
+                        animation: null
                     });
 
+                    marker.addListener('click', () => {
+                        this.selectLocation(index);
+                    });
+
+                    this.markers.push(marker);
                     bounds.extend(marker.getPosition());
                 });
 
                 this.map.fitBounds(bounds);
+
+                // Si solo hay una ubicación, la seleccionamos por defecto
+                if (this.locations.length === 1) {
+                    this.selectLocation(0);
+                }
+            },
+
+            selectLocation(index) {
+                this.selectedLocationIndex = index;
+                const location = this.locations[index];
+                this.googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}`;
+                
+                this.markers.forEach((m, i) => m.setAnimation(i === index ? google.maps.Animation.BOUNCE : null));
+                this.map.panTo(this.markers[index].getPosition());
             }
         }
     }
