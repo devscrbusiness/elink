@@ -62,6 +62,9 @@
                         <flux:navlist.item icon="document-text" :href="route('business.edit.documents', $business)" :current="request()->routeIs('business.edit.documents') && $isEditingOwnBusiness" wire:navigate>
                             {{ __('edit-business.documents_nav') }}
                         </flux:navlist.item>
+                        <flux:navlist.item icon="arrows-up-down" :href="route('business.edit.sections-order', $business)" :current="request()->routeIs('business.edit.sections-order') && $isEditingOwnBusiness" wire:navigate>
+                            {{ __('edit-business.sections_order_nav') }}
+                        </flux:navlist.item>
                     </flux:navlist.group>
                 @endif
             </flux:navlist>

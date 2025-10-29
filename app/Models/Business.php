@@ -7,7 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Business extends Model
 {
-    protected $fillable = ['user_id', 'name', 'description', 'logo', 'website', 'custom_link'];
+    protected $fillable = ['user_id', 'name', 'description', 'logo', 'website', 'custom_link', 'section_order'];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'section_order' => 'array',
+    ];
 
     /**
      * Get the user that owns the business.
