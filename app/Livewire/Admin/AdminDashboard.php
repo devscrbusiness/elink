@@ -28,12 +28,26 @@ class AdminDashboard extends Component
 
         $recentUsers = User::with('business')->latest()->take(5)->get();
 
+        // Fetch businesses with their total visits and total clicks
+        $businessesWithStats = Business::withCount('visits')
+            ->with(['socialLinks' => function ($query) {
+                $query->withCount('clicks');
+            }, 'whatsappLinks' => function ($query) {
+                $query->withCount('clicks');
+            }])
+            ->get()
+            ->map(function ($business) {
+                $business->total_clicks = $business->socialLinks->sum('clicks_count') + $business->whatsappLinks->sum('clicks_count');
+                return $business;
+            });
+
         return view('livewire.admin.admin-dashboard', [
             'totalUsers' => $totalUsers,
             'totalBusinesses' => $totalBusinesses,
             'activeSubscriptions' => $activeSubscriptions,
             'totalLinks' => $totalLinks,
             'recentUsers' => $recentUsers,
+            'businessesWithStats' => $businessesWithStats,
         ]);
     }
 }

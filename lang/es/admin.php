@@ -78,4 +78,8 @@ return [
     'filter_expired' => 'Vencidas',
     'subscription_history_title' => 'Historial de Suscripciones',
     'plan_custom' => 'Personalizado',
+    'business_stats_title' => 'Estadísticas por Empresa',
+    'table_header_total_visits' => 'Visitas Totales',
+    'table_header_total_clicks' => 'Clics Totales',
+    'no_businesses_found' => 'No se encontraron empresas.',
 ];

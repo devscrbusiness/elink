@@ -83,4 +83,58 @@
             </div>
         </div>
     </div>
+
+    {{-- Estadísticas por Empresa --}}
+    <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ __('admin.business_stats_title') }}</h3>
+        <div class="flow-root">
+            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <table class="min-w-full divide-y divide-gray-300 dark:divide-zinc-700">
+                        <thead>
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-0">{{ __('admin.table_header_business') }}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('admin.table_header_total_visits') }}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">{{ __('admin.table_header_total_clicks') }}</th>
+                            <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                <span class="sr-only">Ver Detalles</span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-zinc-800">
+                        @forelse($businessesWithStats as $business)
+                            <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-0">
+                                    <div class="flex items-center">
+                                        @if ($business->logo)
+                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('storage/' . $business->logo) }}" alt="Logo de {{ $business->name }}">
+                                        @else
+                                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-zinc-700 text-sm font-bold text-gray-500 dark:text-gray-300">
+                                                {{ substr($business->name, 0, 2) }}
+                                            </div>
+                                        @endif
+                                        <div class="ml-4">
+                                            <div class="font-medium text-gray-900 dark:text-white">{{ $business->name }}</div>
+                                            <div class="text-gray-500 dark:text-gray-400">{{ $business->user->email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{ $business->visits_count }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">{{ $business->total_clicks }}</td>
+                                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                                    {{-- Link to view detailed stats for this business --}}
+                                    <a href="{{ route('business.edit.data', $business) }}" wire:navigate class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        {{ __('admin.view_public_profile_tooltip') }}<span class="sr-only">, {{ $business->name }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="4" class="text-center py-4 text-gray-500">{{ __('admin.no_businesses_found') }}</td></tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -78,4 +78,8 @@ return [
     'filter_expired' => 'Expired',
     'subscription_history_title' => 'Subscription History',
     'plan_custom' => 'Custom',
+    'business_stats_title' => 'Business Statistics',
+    'table_header_total_visits' => 'Total Visits',
+    'table_header_total_clicks' => 'Total Clicks',
+    'no_businesses_found' => 'No businesses found.',
 ];
