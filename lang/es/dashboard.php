@@ -9,6 +9,7 @@ return [
     'stats' => 'Estadísticas',
     'social_links' => 'enlace social|enlaces sociales',
     'whatsapp_links' => 'enlace de WhatsApp|enlaces de WhatsApp',
+    'document_links' => 'documento|documentos',
     'total_visits' => 'Visitas Totales',
     'total_clicks' => 'Clics Totales',
     'reset_stats' => 'Reiniciar estadísticas',

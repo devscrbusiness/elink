@@ -34,10 +34,12 @@ class AdminDashboard extends Component
                 $query->withCount('clicks');
             }, 'whatsappLinks' => function ($query) {
                 $query->withCount('clicks');
+            }, 'documents' => function ($query) {
+                $query->withCount('clicks');
             }])
             ->get()
             ->map(function ($business) {
-                $business->total_clicks = $business->socialLinks->sum('clicks_count') + $business->whatsappLinks->sum('clicks_count');
+                $business->total_clicks = $business->socialLinks->sum('clicks_count') + $business->whatsappLinks->sum('clicks_count') + $business->documents->sum('clicks_count');
                 return $business;
             });
 

@@ -14,6 +14,7 @@ use App\Livewire\Business\EditBusinessDocuments;
 use App\Livewire\Business\EditBusinessSocialLinks;
 use App\Livewire\Business\EditBusinessWhatsapp;
 use App\Livewire\Business\EditBusinessSectionsOrder;
+use App\Http\Controllers\DocumentRedirectController;
 use App\Http\Controllers\WhatsappRedirectController;
 use App\Http\Controllers\LinkRedirectController;
 use App\Http\Controllers\LocaleController;
@@ -96,6 +97,7 @@ Route::get('locale/{lang}', [LocaleController::class, 'switch'])->name('locale.s
 Route::get('contact/{slug}', [WhatsappRedirectController::class, 'redirect'])->name('whatsapp.redirect');
 Route::get('/wa-link/{id}', [WhatsappRedirectController::class, 'redirectById'])->name('whatsapp.redirect.id');
 Route::get('/link/{id}', [LinkRedirectController::class, 'redirect'])->name('link.redirect');
+Route::get('/document/{document}', [DocumentRedirectController::class, 'redirect'])->name('document.redirect');
 
 require __DIR__.'/auth.php';
 

@@ -123,7 +123,7 @@
     {{-- Tarjeta de Estadísticas --}}
     <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.stats') }}</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ $business->social_links_count }}</p>
                 <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('dashboard.social_links', $business->social_links_count) }}</p>
@@ -131,6 +131,10 @@
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $business->whatsapp_links_count }}</p>
                 <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('dashboard.whatsapp_links', $business->whatsapp_links_count) }}</p>
+            </div>
+            <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
+                <p class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ $business->documents()->count() }}</p>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{{ trans_choice('dashboard.document_links', $business->documents()->count()) }}</p>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-zinc-900/50 rounded-lg text-center">
                 <p class="text-3xl font-bold text-gray-600 dark:text-gray-400">{{ $totalVisits ?? 0 }}</p>

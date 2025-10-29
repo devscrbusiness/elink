@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Business;
+use App\Models\Document;
 use App\Models\SocialLink;
 use App\Models\Click;
 use App\Models\WhatsappLink;
@@ -37,8 +38,14 @@ class Dashboard extends Component
         $totalVisits = $this->business->visits()->count();
         
         $socialLinkClicks = $this->business->clicks()->count();
-        $whatsappLinkClicks = Click::where('clickable_type', WhatsappLink::class)->whereIn('clickable_id', $this->business->whatsappLinks()->pluck('id'))->count();
-        $totalClicks = $socialLinkClicks + $whatsappLinkClicks;
+        $whatsappLinkClicks = Click::where('clickable_type', WhatsappLink::class)
+            ->whereIn('clickable_id', $this->business->whatsappLinks()->pluck('id'))
+            ->count();
+        $documentClicks = Click::where('clickable_type', Document::class)
+            ->whereIn('clickable_id', $this->business->documents()->pluck('id'))
+            ->count();
+
+        $totalClicks = $socialLinkClicks + $whatsappLinkClicks + $documentClicks;
 
         // --- Datos para los gráficos ---
         $visitsData = $this->business->visits()
@@ -52,9 +59,14 @@ class Dashboard extends Component
         // --- Clics por link ---
         $socialLinksWithClicks = $this->business->socialLinks()->withCount('clicks')->get();
         $whatsappLinksWithClicks = $this->business->whatsappLinks()->withCount('clicks')->get();
-        $allLinksWithClicks = $socialLinksWithClicks->concat($whatsappLinksWithClicks)->sortByDesc('clicks_count');
+        $documentsWithClicks = $this->business->documents()->withCount('clicks')->get();
 
-        $clickLabels = $allLinksWithClicks->pluck('alias')->map(fn($alias, $key) => $alias ?: $allLinksWithClicks[$key]->url)->toArray();
+        $allLinksWithClicks = $socialLinksWithClicks
+            ->concat($whatsappLinksWithClicks)
+            ->concat($documentsWithClicks)
+            ->sortByDesc('clicks_count');
+
+        $clickLabels = $allLinksWithClicks->pluck('alias')->map(fn($alias, $key) => $alias ?: ($allLinksWithClicks[$key]->name ?? $allLinksWithClicks[$key]->url))->toArray();
         $clickCounts = $allLinksWithClicks->pluck('clicks_count')->toArray();
 
         // --- Generar Código QR ---
