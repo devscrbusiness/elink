@@ -13,7 +13,9 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.group :heading="__('app.platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('app.dashboard') }}</flux:navlist.item>
+                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                        {{ auth()->user()->role === 1 ? __('app.user_dashboard') : __('app.dashboard') }}
+                    </flux:navlist.item>
                 </flux:navlist.group>
 
                 @if (auth()->user()->role === 1)
@@ -22,6 +24,9 @@
                             $isEditingOtherUserBusiness = request()->routeIs('business.edit.*') && request()->route('business') && request()->route('business')->user_id !== auth()->id();
                             $isEditingOtherUserProfile = request()->routeIs('admin.users.edit.*') && request()->route('user') && request()->route('user')->id !== auth()->id();
                         @endphp
+                        <flux:navlist.item icon="chart-pie" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
+                            {{ __('admin.dashboard_title') }}
+                        </flux:navlist.item>
                         <flux:navlist.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users') || $isEditingOtherUserBusiness || $isEditingOtherUserProfile" wire:navigate>
                             {{ __('admin.users_navigation') }}
                         </flux:navlist.item>

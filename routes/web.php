@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Admin\AdminDashboard;
 use App\Livewire\Admin\EditUserRole;
 use App\Livewire\Admin\EditUserPassword;
 use App\Livewire\Admin\EditUserSubscription;
@@ -31,7 +32,7 @@ Route::view('dashboard', 'dashboard')
 Route::middleware(['auth', 'verified'])->group(function () {
     // Rutas solo para Administradores (rol = 1)
     Route::prefix('admin')->name('admin.')->middleware('role:1')->group(function () {
-        Route::get('/dashboard', fn() => 'Bienvenido, Administrador')->name('dashboard');
+        Route::get('/dashboard', AdminDashboard::class)->name('dashboard');
         Route::get('/users', UserList::class)->name('users');
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');

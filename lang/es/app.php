@@ -5,6 +5,7 @@ return [
     'email' => 'Correo Electrónico',
     'new_password' => 'Nueva Contraseña',
     'save' => 'Guardar',
+    'user_dashboard' => 'Dashboard de Usuario',
     'platform' => 'Plataforma',
     'dashboard' => 'Dashboard',
     'settings' => 'Configuración',

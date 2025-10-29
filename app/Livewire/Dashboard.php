@@ -21,7 +21,14 @@ class Dashboard extends Component
 
     public function mount()
     {
-        $this->business = Auth::user()->business()->withCount(['socialLinks', 'whatsappLinks'])->first();
+        $user = Auth::user();
+        $this->business = $user->business()->withCount(['socialLinks', 'whatsappLinks'])->first();
+
+        // Si es admin y no tiene empresa, lo redirigimos al dashboard de admin.
+        if ($user->role === 1 && !$this->business) {
+            session()->flash('notification', ['text' => __('admin.no_business_for_admin_dashboard'), 'type' => 'info']);
+            $this->redirect(route('admin.dashboard'), navigate: true);
+        }
     }
 
     public function render()

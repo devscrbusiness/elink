@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'dashboard_title' => 'Panel de Administrador',
+    'dashboard_welcome' => 'Bienvenido al panel de administración. Desde aquí puedes gestionar usuarios, suscripciones y ver estadísticas de la plataforma.',
+    'user_plural' => 'Usuario|Usuarios',
+    'business_plural' => 'Empresa|Empresas',
+    'active_subscriptions_plural' => 'Suscripción Activa|Suscripciones Activas',
+    'link_plural' => 'Enlace|Enlaces',
     'navigation_heading' => 'Administración',
     'users_navigation' => 'Usuarios',
     'delete_user_title' => 'Eliminar Usuario',
@@ -28,6 +34,8 @@ return [
     'create_user_title' => 'Crear Nuevo Usuario',
     'create_user_subtitle' => 'Completa los datos para registrar un nuevo usuario en la plataforma.',
     'create_user_button' => 'Crear Usuario',
+    'recent_users_title' => 'Últimos Usuarios Registrados',
+    'no_recent_users' => 'No hay usuarios recientes.',
     'user_created_success' => '¡Usuario creado con éxito!',
     'search_placeholder' => 'Buscar usuarios...',
     'table_header_name' => 'Nombre',
@@ -35,6 +43,7 @@ return [
     'table_header_role' => 'Rol',
     'table_header_business' => 'Empresa',
     'table_header_actions' => 'Acciones',
+    'table_header_registration_date' => 'Fecha de Registro',
     'role_admin' => 'Admin',
     'role_user' => 'Usuario',
     'business_label' => 'Empresa:',

@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'dashboard_title' => 'Admin Panel',
+    'dashboard_welcome' => 'Welcome to the administration panel. From here you can manage users, subscriptions, and view platform statistics.',
+    'user_plural' => 'User|Users',
+    'business_plural' => 'Business|Businesses',
+    'active_subscriptions_plural' => 'Active Subscription|Active Subscriptions',
+    'link_plural' => 'Link|Links',
     'navigation_heading' => 'Administration',
     'users_navigation' => 'Users',
     'delete_user_title' => 'Delete User',
@@ -28,6 +34,8 @@ return [
     'create_user_title' => 'Create New User',
     'create_user_subtitle' => 'Complete the details to register a new user on the platform.',
     'create_user_button' => 'Create User',
+    'recent_users_title' => 'Recent Registered Users',
+    'no_recent_users' => 'No recent users.',
     'user_created_success' => 'User created successfully!',
     'search_placeholder' => 'Search users...',
     'table_header_name' => 'Name',
@@ -35,6 +43,7 @@ return [
     'table_header_role' => 'Role',
     'table_header_business' => 'Business',
     'table_header_actions' => 'Actions',
+    'table_header_registration_date' => 'Registration Date',
     'role_admin' => 'Admin',
     'role_user' => 'User',
     'business_label' => 'Business:',
