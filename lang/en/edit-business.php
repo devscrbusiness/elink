@@ -53,7 +53,7 @@ return [
     'location_map_label' => 'Select the location on the map',
     'location_map_helper' => 'Click on the map or drag the marker to adjust your business location.',
     'contact_whatsapp_title' => 'WhatsApp Contact',
-    'our_networks_title' => 'Media',
+    'our_networks_title' => 'Social Media',
     'contact_mail_title' => 'Mail',
     'other_links_title' => 'Other Links',
     'location_title' => 'Location|Locations',
