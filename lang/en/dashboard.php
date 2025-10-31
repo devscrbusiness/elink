@@ -9,6 +9,7 @@ return [
     'stats' => 'Statistics',
     'social_links' => 'social link|social links',
     'whatsapp_links' => 'WhatsApp link|WhatsApp links',
+    'document_links' => 'Document|Documents',
     'total_visits' => 'Total Visits',
     'total_clicks' => 'Total Clicks',
     'reset_stats' => 'Reset statistics',
