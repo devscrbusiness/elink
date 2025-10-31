@@ -25,9 +25,9 @@
     <div class="flex items-center justify-center gap-2 p-3">
         <a href="{{ route('locale.switch', 'es') }}"
            aria-pressed="{{ app()->getLocale() === 'es' ? 'true' : 'false' }}"
-           class="inline-flex items-center gap-2 px-3 py-2 rounded-full border font-semibold transition
+           class="inline-flex items-center gap-2 px-3 py-2 rounded-full border font-semibold transition text-xs
                   {{ app()->getLocale() === 'es' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:border-zinc-700' }}">
-            <span class="w-5 h-5 inline-block" aria-hidden="true">
+            <span class="w-4 h-4 inline-block" aria-hidden="true">
                 <svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                     <rect width="60" height="36" fill="#c60b1e"/>
                     <rect y="8" width="60" height="20" fill="#ffc400"/>
@@ -38,9 +38,9 @@
         </a>
         <a href="{{ route('locale.switch', 'en') }}"
            aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}"
-           class="inline-flex items-center gap-2 px-3 py-2 rounded-full border font-semibold transition
+           class="inline-flex items-center gap-2 px-3 py-2 rounded-full border font-semibold transition text-xs
                   {{ app()->getLocale() === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:border-zinc-700' }}">
-            <span class="w-5 h-5 inline-block" aria-hidden="true">
+            <span class="w-4 h-4 inline-block" aria-hidden="true">
                 <svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                     <rect width="60" height="36" fill="#012169"/>
                     <g fill="#fff">
