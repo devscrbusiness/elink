@@ -26,9 +26,9 @@
     <div class="flex items-center justify-center gap-2 p-3">
         <a href="{{ route('locale.switch', 'es') }}"
            aria-pressed="{{ app()->getLocale() === 'es' ? 'true' : 'false' }}"
-           class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border font-semibold transition text-xs
+           class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border font-semibold transition text-xs sm:gap-1.5 sm:px-2 sm:py-1 md:gap-2 md:px-3 md:py-2 md:text-sm
                   {{ app()->getLocale() === 'es' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:border-zinc-700' }}">
-            <span class="w-3.5 h-3.5 inline-block" aria-hidden="true">
+            <span class="w-2.5 h-2.5 inline-block sm:w-3 sm:h-3 md:w-4 md:h-4" aria-hidden="true">
                 <svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                     <rect width="60" height="36" fill="#c60b1e"/>
                     <rect y="8" width="60" height="20" fill="#ffc400"/>
@@ -39,9 +39,9 @@
         </a>
         <a href="{{ route('locale.switch', 'en') }}"
            aria-pressed="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}"
-           class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border font-semibold transition text-xs
+           class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full border font-semibold transition text-xs sm:gap-1.5 sm:px-2 sm:py-1 md:gap-2 md:px-3 md:py-2 md:text-sm
                   {{ app()->getLocale() === 'en' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-gray-200 dark:border-zinc-700' }}">
-            <span class="w-3.5 h-3.5 inline-block" aria-hidden="true">
+            <span class="w-2.5 h-2.5 inline-block sm:w-3 sm:h-3 md:w-4 md:h-4" aria-hidden="true">
                 <svg viewBox="0 0 60 36" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                     <rect width="60" height="36" fill="#012169"/>
                     <g fill="#fff">
