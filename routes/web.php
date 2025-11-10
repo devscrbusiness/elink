@@ -13,6 +13,7 @@ use App\Livewire\Business\EditBusinessLocation;
 use App\Livewire\Business\EditBusinessDocuments;
 use App\Livewire\Business\EditBusinessSocialLinks;
 use App\Livewire\Business\EditBusinessWhatsapp;
+use App\Livewire\Business\EditBusinessSms;
 use App\Livewire\Business\EditBusinessSectionsOrder;
 use App\Http\Controllers\DocumentRedirectController;
 use App\Http\Controllers\WhatsappRedirectController;
@@ -48,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('users/{user}/edit/role', EditUserRole::class)->name('users.edit.role');
         Route::get('/users/{user}/edit/subscription', EditUserSubscription::class)->name('users.edit.subscription');
         Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
+        Route::get('business/{business}/edit/sms', EditBusinessSms::class)->name('business.edit.sms');
         Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
         Route::get('business/{business}/edit/documents', EditBusinessDocuments::class)->name('business.edit.documents');
         Route::get('business/{business}/edit/sections-order', EditBusinessSectionsOrder::class)->name('business.edit.sections-order');
@@ -86,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('business/{business}/edit/data', EditBusinessData::class)->name('business.edit.data');
     Route::get('business/{business}/edit/location', EditBusinessLocation::class)->name('business.edit.location');
     Route::get('business/{business}/edit/whatsapp', EditBusinessWhatsapp::class)->name('business.edit.whatsapp');
+    Route::get('business/{business}/edit/sms', EditBusinessSms::class)->name('business.edit.sms');
     Route::get('business/{business}/edit/social-links', EditBusinessSocialLinks::class)->name('business.edit.social-links');
     Route::get('business/{business}/edit/documents', EditBusinessDocuments::class)->name('business.edit.documents');
     Route::get('business/{business}/edit/sections-order', \App\Livewire\Business\EditBusinessSectionsOrder::class)->name('business.edit.sections-order');

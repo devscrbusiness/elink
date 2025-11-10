@@ -12,6 +12,7 @@
             'whatsapp',
             'social_networks',
             'mails',
+            'sms',
             'websites',
             'others',
             'documents',
@@ -155,6 +156,26 @@
                                 <a href="{{ route('link.redirect', $link->id) }}" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 dark:text-gray-200 font-bold py-3 px-4 rounded-full transition">
                                     <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
                                     <span class="select-none">{{ $link->alias ?: $displayEmail }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
+                @endif
+                @break
+
+            @case('sms')
+                @if($sms->count())
+                    <div class="p-6">
+                        <h2 class="font-bold text-gray-800 dark:text-gray-200 mb-3 text-center">{{ __('edit-business.contact_sms_title') }}</h2>
+                        <div class="flex flex-col gap-3">
+                            @foreach($sms as $link)
+                                @php
+                                    $displaySms = str_replace('sms:', '', $link->url);
+                                @endphp
+                                <a href="{{ route('link.redirect', $link->id) }}" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 font-bold py-3 px-4 rounded-full transition">
+                                    <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
+                                    <span class="select-none">{{ $link->alias ?: $displaySms }}</span>
                                 </a>
                             @endforeach
                         </div>

@@ -44,6 +44,9 @@
                     <flux:navlist.item :href="route('admin.business.edit.whatsapp', $business)" :current="request()->routeIs('admin.business.edit.whatsapp')" wire:navigate>
                         {{ __('edit-business.whatsapp_nav') }}
                     </flux:navlist.item>
+                    <flux:navlist.item :href="route('admin.business.edit.sms', $business)" :current="request()->routeIs('admin.business.edit.sms')" wire:navigate>
+                        {{ __('edit-business.sms_nav') }}
+                    </flux:navlist.item>
                     <flux:navlist.item :href="route('admin.business.edit.social-links', $business)" :current="request()->routeIs('admin.business.edit.social-links')" wire:navigate>
                         {{ __('edit-business.social_links_nav') }}
                     </flux:navlist.item>

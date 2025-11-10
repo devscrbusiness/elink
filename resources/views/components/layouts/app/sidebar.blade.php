@@ -51,6 +51,9 @@
                         <flux:navlist.item icon="chat-bubble-left-right" :href="route('business.edit.whatsapp', $business)" :current="request()->routeIs('business.edit.whatsapp') && $isEditingOwnBusiness" wire:navigate>
                             {{ __('edit-business.whatsapp_nav') }}
                         </flux:navlist.item>
+                        <flux:navlist.item icon="chat-bubble-left-ellipsis" :href="route('business.edit.sms', $business)" :current="request()->routeIs('business.edit.sms') && $isEditingOwnBusiness" wire:navigate>
+                            {{ __('edit-business.sms_nav') }}
+                        </flux:navlist.item>
                         <flux:navlist.item icon="link" :href="route('business.edit.social-links', $business)" :current="request()->routeIs('business.edit.social-links') && $isEditingOwnBusiness"
                             wire:navigate>
                             {{ __('edit-business.social_links_nav') }}

@@ -26,6 +26,7 @@ class BusinessPublic extends Component
     public Collection $socialNetworks;
     public Collection $mails;
     public Collection $websites;
+    public Collection $sms;
     public Collection $others;
 
     /**
@@ -54,7 +55,8 @@ class BusinessPublic extends Component
         $this->websites = $publicSocialLinks->where('type', 'website');
         $this->mails = $publicSocialLinks->where('type', 'mail');
         $this->others = $publicSocialLinks->where('type', 'other');
-        $this->socialNetworks = $publicSocialLinks->whereNotIn('type', ['website', 'mail', 'other']);
+        $this->sms = $publicSocialLinks->where('type', 'sms');
+        $this->socialNetworks = $publicSocialLinks->whereNotIn('type', ['website', 'mail', 'other', 'sms']);
     }
 
     public function logClick(int $linkId, string $linkType)

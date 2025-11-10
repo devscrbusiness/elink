@@ -15,6 +15,7 @@ class EditBusinessSectionsOrder extends Component
     {
         return [
             ['id' => 'whatsapp', 'name' => __('edit-business.section_whatsapp')],
+            ['id' => 'sms', 'name' => __('edit-business.section_sms')],
             ['id' => 'social_networks', 'name' => __('edit-business.section_social_networks')],
             ['id' => 'mails', 'name' => __('edit-business.section_mails')],
             ['id' => 'websites', 'name' => __('edit-business.section_websites')],
