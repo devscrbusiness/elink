@@ -182,9 +182,9 @@
                                 </a>
                             @endforeach
                         </div>
-                        <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
+                        {{-- <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
                             {{ __('edit-business.sms_ios_help') }}
-                        </p>
+                        </p> --}}
                     </div>
                     <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
                 @endif
