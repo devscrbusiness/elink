@@ -102,6 +102,9 @@
                                 </a>
                             @endforeach
                         </div>
+                        <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
+                            {{ __('edit-business.sms_ios_help') }}
+                        </p>
                     </div>
                     <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
                 @endif
@@ -173,12 +176,15 @@
                                 @php
                                     $displaySms = str_replace('sms:', '', $link->url);
                                 @endphp
-                                <a href="{{ route('link.redirect', $link->id) }}" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 font-bold py-3 px-4 rounded-full transition">
+                                <a href="{{ $link->url }}" class="flex items-center justify-center gap-3 bg-gray-500 dark:bg-zinc-800 hover:bg-gray-800 dark:hover:bg-zinc-700 text-gray-200 font-bold py-3 px-4 rounded-full transition">
                                     <x-dynamic-component :component="'icons.social.' . $link->type" class="w-6 h-6" />
                                     <span class="select-none">{{ $link->alias ?: $displaySms }}</span>
                                 </a>
                             @endforeach
                         </div>
+                        <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
+                            {{ __('edit-business.sms_ios_help') }}
+                        </p>
                     </div>
                     <hr class="border-t-2 border-gray-100 dark:border-zinc-800">
                 @endif

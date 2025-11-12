@@ -103,4 +103,5 @@ return [
     'sms_links_subtitle' => 'Add and manage phone numbers for SMS contact.',
     'no_sms_links' => 'You have not added any SMS links yet.',
     'section_sms' => 'SMS Contact',
+    'sms_ios_help' => 'On iPhone, the system will ask for permission to open the Messages app. This is a normal security step.',
 ];

@@ -103,4 +103,5 @@ return [
     'sms_links_title' => 'Enlaces de SMS',
     'sms_links_subtitle' => 'Añade y gestiona los números de teléfono para contacto por SMS.',
     'no_sms_links' => 'Aún no has añadido ningún enlace de SMS.',
+    'sms_ios_help' => 'En iPhone, el sistema pedirá permiso para abrir la aplicación de Mensajes. Este es un paso de seguridad normal.',
 ];
