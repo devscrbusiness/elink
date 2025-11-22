@@ -295,7 +295,7 @@
     {{-- Modal para compartir --}}
     @php
         $publicUrl = url()->current();
-        $shareText = urlencode("¡Mira este perfil en eLink! " . $publicUrl);
+        $shareText = urlencode("Mira mi perfil en eLINK!! " . $publicUrl . " (Quieres tener un eLINK como este. Visita nuestro sitio web https://elink.ec y conoce nuestros planes.)");
         $shareUrl = urlencode($publicUrl);
 
         $shareLinks = [
