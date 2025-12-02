@@ -113,6 +113,6 @@ class Login extends Component
         // Compartir usuarios con el layout
         view()->share('usuarios', $usuarios);
 
-        return view('livewire.auth.login', compact('usuarios', 'reviews'));
+        return view('livewire.auth.login', compact('usuarios'));
     }
 }
