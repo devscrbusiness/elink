@@ -78,4 +78,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Subscription::class)->latestOfMany();
     }
+
+    public function card()
+    {
+        return $this->hasOne(Card::class);
+    }
 }

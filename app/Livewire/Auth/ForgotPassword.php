@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -23,5 +24,14 @@ class ForgotPassword extends Component
         Password::sendResetLink($this->only('email'));
 
         session()->flash('status', __('A reset link will be sent if the account exists.'));
+    }
+
+    public function render()
+    {
+        // Obtener usuarios para el carrusel
+        $usuarios = User::whereHas('business', fn ($q) => $q->whereNotNull('name')->whereNotNull('logo'))->inRandomOrder()->take(10)->get();
+        view()->share('usuarios', $usuarios);
+
+        return view('livewire.auth.forgot-password');
     }
 }
