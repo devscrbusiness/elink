@@ -29,7 +29,7 @@
             />
 
             @if (Route::has('password.request'))
-                <flux:link class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
+                <flux:link variant="ghost" class="absolute top-0 text-sm end-0" :href="route('password.request')" wire:navigate>
                     {{ __('auth.forgot_your_password') }}
                 </flux:link>
             @endif
