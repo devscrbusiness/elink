@@ -26,7 +26,7 @@ class User extends Authenticatable
         'country',
         'account_type',
         'role',
-        'sector'
+        'is_favorite',
     ];
 
     /**
@@ -49,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_favorite' => 'boolean',
         ];
     }
 
@@ -77,10 +78,5 @@ class User extends Authenticatable
         public function latestSubscription()
     {
         return $this->hasOne(Subscription::class)->latestOfMany();
-    }
-
-    public function card()
-    {
-        return $this->hasOne(Card::class);
     }
 }

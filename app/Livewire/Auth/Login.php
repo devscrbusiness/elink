@@ -108,7 +108,7 @@ class Login extends Component
     public function render()
     {
         // Obtener usuarios para el carrusel
-        $usuarios = User::whereHas('business', fn ($q) => $q->whereNotNull('name')->whereNotNull('logo'))->inRandomOrder()->take(10)->get();
+        $usuarios = User::where('is_favorite', true)->whereHas('business', fn ($q) => $q->whereNotNull('name')->whereNotNull('logo'))->inRandomOrder()->take(10)->get();
 
         // Compartir usuarios con el layout
         view()->share('usuarios', $usuarios);

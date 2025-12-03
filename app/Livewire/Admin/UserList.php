@@ -36,6 +36,19 @@ class UserList extends Component
         ]);
     }
 
+    public function toggleFavorite(User $user): void
+    {
+        $user->is_favorite = !$user->is_favorite;
+        $user->save();
+
+        $message = $user->is_favorite ? __('admin.user_added_to_favorites') : __('admin.user_removed_from_favorites');
+
+        $this->dispatch('open-notification', [
+            'text' => $message,
+            'type' => 'success',
+        ]);
+    }
+
     public function render()
     {
         $users = User::with('business')

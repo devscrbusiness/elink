@@ -24,42 +24,41 @@
         </div>
 
         {{-- Sección de las tarjetas --}}
-        <div class="order-3 md:order-none md:row-start-2 md:col-span-1 lg:col-span-2 text-white font-family-barlow-condensed overflow-hidden p-6 lg:px-8 md:pt-8 relative">
-            <div class="absolute inset-0 -z-10 bg-gradient-to-tr from-blue-600 via-blue-600 to-green-600"></div>
+        <div class="order-3 md:order-none md:row-start-2 md:col-span-1 lg:col-span-2 text-white font-family-barlow-condensed overflow-hidden p-6 lg:px-8 md:pt-8 relative bg-gradient-to-tr from-blue-600 via-blue-600 to-green-600">
             <div class="max-w-7xl mx-auto">
                 <h2 class="text-3xl font-bold text-white mb-4 text-center md:text-left">Nuestros Clientes</h2>
                 <div class="swiper mySwiper h-full">
                     <div class="swiper-wrapper pb-12">
-                            @if(isset($usuarios) && $usuarios->isNotEmpty())
-                            @foreach ($usuarios as $usuario)
-                            <div class="swiper-slide">
-                                <div class="flex flex-col h-full">
-                                    <div class="bg-white/90 backdrop-blur-sm p-6 lg:px-8 rounded-3xl shadow-lg text-center flex-grow flex flex-col min-h-64">
-                                        <div class="flex justify-center mb-4">
-                                            @if($usuario->business->logo)
-                                            <img src="{{ asset('storage/' . $usuario->business->logo) }}" alt="Logo de {{ $usuario->business->name }}" class="h-24 w-24 rounded-full object-cover ring-2 ring-blue-500">
-                                            @else
-                                            <div class="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center ring-2 ring-blue-500">
-                                                <span class="text-gray-500 text-xs text-center">Sin logo</span>
-                                            </div>
-                                            @endif
+                        @if(isset($usuarios) && $usuarios->isNotEmpty())
+                        @foreach ($usuarios as $usuario)
+                        <div class="swiper-slide">
+                            <div class="flex flex-col h-full">
+                                <div class="bg-white/90 backdrop-blur-sm p-6 lg:px-8 rounded-3xl shadow-lg text-center flex-grow flex flex-col min-h-64">
+                                    <div class="flex justify-center mb-4">
+                                        @if($usuario->business->logo)
+                                        <img src="{{ asset('storage/' . $usuario->business->logo) }}" alt="Logo de {{ $usuario->business->name }}" class="h-24 w-24 rounded-full object-cover ring-2 ring-blue-500">
+                                        @else
+                                        <div class="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center ring-2 ring-blue-500">
+                                            <span class="text-gray-500 text-xs text-center">Sin logo</span>
                                         </div>
-                                        <div class="flex-grow">
-                                            <h3 class="text-xl font-bold text-gray-800">{{ $usuario->business->name }}</h3>
-                                            <p class="mt-2 text-sm text-gray-600">{{ Str::limit($usuario->business->description, 100) }}</p>
-                                        </div>
+                                        @endif
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h3 class="text-xl font-bold text-gray-800">{{ $usuario->business->name }}</h3>
+                                        <p class="mt-2 text-sm text-gray-600">{{ Str::limit($usuario->business->description, 100) }}</p>
                                     </div>
                                 </div>
                             </div>
-                            @endforeach
-                            @endif
                         </div>
-                        <div class="swiper-pagination"></div>
-                        <div class="swiper-button-next text-white"></div>
-                        <div class="swiper-button-prev text-white"></div>
+                        @endforeach
+                        @endif
                     </div>
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next text-white"></div>
+                    <div class="swiper-button-prev text-white"></div>
                 </div>
             </div>
+        </div>
     </div>
 
     @livewireScripts

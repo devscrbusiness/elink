@@ -42,6 +42,7 @@ return [
     'table_header_email' => 'Email',
     'table_header_role' => 'Role',
     'table_header_business' => 'Business',
+    'table_header_favorite'=> 'Favorite',
     'table_header_actions' => 'Actions',
     'table_header_registration_date' => 'Registration Date',
     'role_admin' => 'Admin',
