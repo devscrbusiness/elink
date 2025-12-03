@@ -83,4 +83,7 @@ return [
     'table_header_total_visits' => 'Visitas Totales',
     'table_header_total_clicks' => 'Clics Totales',
     'no_businesses_found' => 'No se encontraron empresas.',
+    'favorite_limit_reached' => 'Has alcanzado el límite de 8 usuarios favoritos.',
+    'user_added_to_favorites' => 'Usuario añadido a favoritos.',
+    'user_removed_from_favorites' => 'Usuario eliminado de favoritos.',
 ];

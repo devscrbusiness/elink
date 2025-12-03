@@ -53,7 +53,11 @@
 
                     {{-- Switch de Favorito --}}
                     <div class="md:col-span-1 text-center">
-                        <flux:switch wire:click="toggleFavorite({{ $user->id }})" :checked="$user->is_favorite" id="favorite-switch-{{ $user->id }}" />
+                        <flux:switch
+                            wire:click="toggleFavorite({{ $user->id }})"
+                            :checked="$user->is_favorite"
+                            :disabled="!$user->is_favorite && $favoriteCount >= 8"
+                            id="favorite-switch-{{ $user->id }}" />
                     </div>
 
                     <!-- Empresa -->
@@ -114,5 +118,33 @@
 
     <div class="mt-6">
         {{ $users->links() }}
+    </div>
+
+    <!-- Componente de Notificación -->
+    <div
+        x-data="{
+            show: false,
+            text: '',
+            type: 'success',
+            timeout: null
+        }"
+        x-on:open-notification.window="
+            text = $event.detail.text;
+            type = $event.detail.type;
+            show = true;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => show = false, 3000);
+        "
+        x-show="show"
+        x-transition
+        x-cloak
+        x-bind:class="{
+            'bg-green-600 border-green-700': type === 'success',
+            'bg-red-600 border-red-700': type === 'danger',
+            'bg-yellow-500 border-yellow-600 text-black': type === 'warning'
+        }"
+        class="fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-lg text-sm font-semibold border-b-4"
+    >
+        <span x-text="text"></span>
     </div>
 </div>

@@ -13,14 +13,7 @@ class UserList extends Component
 
     public $query = '';
 
-    public function mount()
-    {
-        if (session()->has('notification')) {
-            $notification = session('notification');
-            $this->dispatch('open-notification', text: $notification['text'], type: $notification['type']);
-            session()->forget('notification');
-        }
-    }
+    public int $favoriteCount = 0;
 
     public function deleteUser(User $user): void
     {
@@ -30,23 +23,23 @@ class UserList extends Component
 
         $user->delete();
 
-        $this->dispatch('open-notification', [
-            'text' => __('admin.delete_user_success'),
-            'type' => 'success',
-        ]);
+        $this->dispatch('open-notification', text: __('admin.delete_user_success'), type: 'success');
     }
 
     public function toggleFavorite(User $user): void
     {
+        if (!$user->is_favorite && $this->favoriteCount >= 8) {
+            $this->dispatch('open-notification', text: __('admin.favorite_limit_reached'), type: 'warning');
+            return;
+        }
+
         $user->is_favorite = !$user->is_favorite;
         $user->save();
 
         $message = $user->is_favorite ? __('admin.user_added_to_favorites') : __('admin.user_removed_from_favorites');
+        $this->favoriteCount = User::where('is_favorite', true)->count();
 
-        $this->dispatch('open-notification', [
-            'text' => $message,
-            'type' => 'success',
-        ]);
+        $this->dispatch('open-notification', text: $message, type: 'success');
     }
 
     public function render()
@@ -61,6 +54,8 @@ class UserList extends Component
             })
             ->orderBy('name', 'asc')
             ->paginate(10);
+
+        $this->favoriteCount = User::where('is_favorite', true)->count();
 
         return view('livewire.admin.user-list', [
             'users' => $users,

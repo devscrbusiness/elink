@@ -83,4 +83,7 @@ return [
     'table_header_total_visits' => 'Total Visits',
     'table_header_total_clicks' => 'Total Clicks',
     'no_businesses_found' => 'No businesses found.',
+    'favorite_limit_reached' => 'You have reached the limit of 8 favorite users.',
+    'user_added_to_favorites' => 'User added to favorites.',
+    'user_removed_from_favorites' => 'User removed from favorites.',
 ];
