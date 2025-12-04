@@ -60,7 +60,7 @@ class EditBusinessDocuments extends Component
         ]);
 
         session()->flash('message', __('edit-business.document_upload_success'));
-        $this->reset(['documentName', 'documentFile']);
+        $this->reset(['documentName']);
         $this->loadDocuments();
     }
 
