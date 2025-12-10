@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'last_7_days' => 'Last 7 days',
+    'last_15_days' => 'Last 15 days',
+    'last_month' => 'Last month',
+    'last_year' => 'Last year',
+    'all_time' => 'All time',
+    'showing_stats_for' => 'Showing stats for',
+    'visits_over_time' => 'Visits Over Time',
     'view_public_profile' => 'View Public Profile',
     'edit_information' => 'Edit Information',
     'add_link' => 'Add Link',

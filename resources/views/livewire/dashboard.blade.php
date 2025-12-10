@@ -156,11 +156,32 @@
         </div>
     </div>
 
+    {{-- Selector de Rango de Fechas para Gráficos --}}
+    <div class="flex flex-col sm:flex-row justify-start items-center gap-4 p-4 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <div class="relative w-full sm:w-auto">
+            <select wire:model.live="range" id="range" class="block appearance-none w-full bg-gray-50 border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-gray-200 dark:focus:bg-zinc-600">
+                <option value="all">{{ __('dashboard.all_time') }}</option>
+                <option value="7_days">{{ __('dashboard.last_7_days') }}</option>
+                <option value="15_days">{{ __('dashboard.last_15_days') }}</option>
+                <option value="1_month">{{ __('dashboard.last_month') }}</option>
+                <option value="1_year">{{ __('dashboard.last_year') }}</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-400">
+                <x-icon name="chevron-down" class="w-4 h-4" />
+            </div>
+        </div>
+    </div>
+
     {{-- Gráficos de Estadísticas --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {{-- Gráfico de Visitas --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.last_7_days_visits') }}</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('dashboard.visits_over_time') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    {{ $rangeText }}
+                </p>
+            </div>
             <div class="relative h-64">
                 <canvas id="visitsChart"></canvas>
             </div>
@@ -168,7 +189,12 @@
 
         {{-- Gráfico de Clics por Enlace --}}
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{{ __('dashboard.clicks_per_link') }}</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('dashboard.clicks_per_link') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    {{ $rangeText }}
+                </p>
+            </div>
             <div class="relative h-64">
                 <canvas id="clicksChart"></canvas>
             </div>
@@ -230,46 +256,50 @@
         let visitsChartInstance = null;
         let clicksChartInstance = null;
 
-        document.addEventListener('livewire:navigated', () => {
+        // Función para inicializar/actualizar los gráficos
+        const updateCharts = (visitsData, clickChartData, range) => {
             const darkMode = document.documentElement.classList.contains('dark');
             const gridColor = darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
             const fontColor = darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
 
-            // Destrucción los gráficos anteriores si existen para evitar conflictos.
+            // Destruir los gráficos anteriores si existen para evitar conflictos.
             if (visitsChartInstance) visitsChartInstance.destroy();
             if (clicksChartInstance) clicksChartInstance.destroy();
 
             // --- Procesamiento para el Gráfico de Visitas (con zona horaria local) ---
-            const visitsDataByHourUtc = @json($visitsData); // Recibe {'YYYY-MM-DD HH:00:00': count} en UTC
-            const dailyVisitsLocal = {};
-
-            // 1. Inicializar los últimos 7 días en la zona horaria LOCAL del navegador
-            for (let i = 0; i < 7; i++) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                // Usamos getFullYear, getMonth, getDate para obtener la fecha local correctamente
-                const localDateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                dailyVisitsLocal[localDateString] = 0;
+            const visitsDataByDate = visitsData;
+            if (!visitsDataByDate) {
+                console.error('visitsData is not available');
+                return;
+            }
+            // 1. Determinar el número de días a mostrar según el rango
+            let daysToShow;
+            switch(range) {
+                case '7_days': daysToShow = 7; break;
+                case '15_days': daysToShow = 15; break;
+                case '1_month': daysToShow = 30; break; // Aproximado
+                case '1_year': daysToShow = 365; break; // Aproximado
+                default: daysToShow = Object.keys(visitsDataByDate).length || 7; // Si es 'all', usa los datos o 7 por defecto
             }
 
-            // 2. Re-agrupar las visitas (que vienen en UTC) al día LOCAL correspondiente
-            for (const utcHourString in visitsDataByHourUtc) {
-                const count = visitsDataByHourUtc[utcHourString];
-                // Interpretar la fecha como UTC y convertirla a la fecha local del navegador
-                const localDate = new Date(utcHourString.replace(' ', 'T') + 'Z');
-                const localDateString = `${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, '0')}-${String(localDate.getDate()).padStart(2, '0')}`;
+            // 2. Inicializar los días en el gráfico con 0 visitas
+            const dailyVisits = {};
+            const sortedDates = Object.keys(visitsDataByDate).sort((a, b) => new Date(a) - new Date(b));
+            const lastDate = sortedDates.length > 0 ? new Date(sortedDates[sortedDates.length - 1] + 'T00:00:00') : new Date();
 
-                if (dailyVisitsLocal.hasOwnProperty(localDateString)) {
-                    dailyVisitsLocal[localDateString] += count;
-                }
+            for (let i = 0; i < daysToShow; i++) {
+                const date = new Date(lastDate);
+                date.setDate(date.getDate() - i);
+                const dateString = date.toISOString().split('T')[0];
+                dailyVisits[dateString] = visitsDataByDate[dateString] || 0;
             }
 
             // 3. Preparar etiquetas y datos para el gráfico, ordenados por fecha
-            const visitLabels = Object.keys(dailyVisitsLocal).sort().map(dateStr => {
+            const visitLabels = Object.keys(dailyVisits).sort().map(dateStr => {
                 const date = new Date(dateStr + 'T00:00:00'); // Interpretar como fecha local para el formato de la etiqueta
-                return date.toLocaleString(undefined, { weekday: 'short', day: 'numeric' });
+                return date.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short'});
             });
-            const visitCounts = Object.keys(dailyVisitsLocal).sort().map(date => dailyVisitsLocal[date]);
+            const visitCounts = Object.keys(dailyVisits).sort().map(date => dailyVisits[date]);
 
             // Gráfico de Visitas
             const visitsCtx = document.getElementById('visitsChart').getContext('2d');
@@ -309,13 +339,17 @@
 
             // Gráfico de Clics
             const clicksCtx = document.getElementById('clicksChart').getContext('2d');
+            if (!clicksCtx) {
+                return;
+            }
+
             clicksChartInstance = new Chart(clicksCtx, {
                 type: 'bar',
                 data: {
-                    labels: @json($clickChart['labels']),
+                    labels: clickChartData.labels,
                     datasets: [{
                         label: '{{ __('dashboard.clicks') }}',
-                        data: @json($clickChart['data']),
+                        data: clickChartData.data,
                         backgroundColor: 'rgba(34, 197, 94, 0.5)',
                         borderColor: 'rgba(34, 197, 94, 1)',
                         borderWidth: 1
@@ -333,6 +367,18 @@
                         legend: { display: false }
                     }
                 }
+            });
+        };
+
+        // Se ejecuta la primera vez que la página carga con wire:navigate
+        document.addEventListener('livewire:navigated', () => {
+            updateCharts(@js($visitsData), @js($clickChart), @js($range));
+        });
+
+        // Escucha el evento 'update-charts' despachado desde el backend
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('update-charts', (event) => {
+                updateCharts(event.visitsData, event.clickChart, event.range);
             });
         });
     </script>

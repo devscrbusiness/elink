@@ -20,6 +20,11 @@ class Dashboard extends Component
 {
     public ?Business $business;
 
+    public $range = 'all';
+    public $rangeText = '';
+
+    public $totalVisits, $totalClicks, $qrCode, $clickChart, $visitsData;
+
     public function mount()
     {
         $user = Auth::user();
@@ -30,56 +35,90 @@ class Dashboard extends Component
             session()->flash('notification', ['text' => __('admin.no_business_for_admin_dashboard'), 'type' => 'info']);
             $this->redirect(route('admin.dashboard'), navigate: true);
         }
+
+        $this->updateStats();
     }
 
-    public function render()
+    public function updatedRange($value)
     {
-        $this->business->loadCount(['socialLinks', 'whatsappLinks']);
-        $totalVisits = $this->business->visits()->count();
-        
-        $socialLinkClicks = $this->business->clicks()->count();
-        $whatsappLinkClicks = Click::where('clickable_type', WhatsappLink::class)
-            ->whereIn('clickable_id', $this->business->whatsappLinks()->pluck('id'))
-            ->count();
-        $documentClicks = Click::where('clickable_type', Document::class)
-            ->whereIn('clickable_id', $this->business->documents()->pluck('id'))
-            ->count();
+        $this->range = $value;
+        $this->updateStats();
+    }
 
-        $totalClicks = $socialLinkClicks + $whatsappLinkClicks + $documentClicks;
+    public function updateStats()
+    {
+        $this->rangeText = $this->getRangeText();
+        $startDate = $this->getStartDate();
+
+        $this->business->loadCount(['socialLinks', 'whatsappLinks']);
+
+        // --- Cuentas totales ---
+        $visitsQuery = $this->business->visits();
+        $socialLinkClicksQuery = $this->business->clicks();
+        $whatsappLinkClicksQuery = Click::where('clickable_type', WhatsappLink::class)->whereIn('clickable_id', $this->business->whatsappLinks()->pluck('id'));
+        $documentClicksQuery = Click::where('clickable_type', Document::class)->whereIn('clickable_id', $this->business->documents()->pluck('id'));
+
+        if ($startDate) {
+            $visitsQuery->where('created_at', '>=', $startDate);
+            $socialLinkClicksQuery->where('clicks.created_at', '>=', $startDate);
+            $whatsappLinkClicksQuery->where('created_at', '>=', $startDate);
+            $documentClicksQuery->where('created_at', '>=', $startDate);
+        }
+
+        $this->totalVisits = $visitsQuery->count();
+        $socialLinkClicks = $socialLinkClicksQuery->count();
+        $whatsappLinkClicks = $whatsappLinkClicksQuery->count();
+        $documentClicks = $documentClicksQuery->count();
+        $this->totalClicks = $socialLinkClicks + $whatsappLinkClicks + $documentClicks;
 
         // --- Datos para los gráficos ---
-        $visitsData = $this->business->visits()
-            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay())
-            // Agrupamos por hora en UTC. Nota: strftime es para SQLite. Usa DATE_FORMAT para MySQL.
-            ->select(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:00:00') as hour"), DB::raw('count(*) as count'))
-            ->groupBy('hour')
-            ->pluck('count', 'hour'); // La clave ahora es 'hour', que sí existe en el select.
+        $visitsQueryForChart = $this->business->visits();
+        if ($startDate) {
+            $visitsQueryForChart->where('created_at', '>=', $startDate);
+        }
+        $this->visitsData = $visitsQueryForChart->select(DB::raw("DATE(created_at) as date"), DB::raw('count(*) as count'))
+            ->groupBy('date')
+            ->pluck('count', 'date');
 
 
         // --- Clics por link ---
-        $socialLinksWithClicks = $this->business->socialLinks()->withCount('clicks')->get();
-        $whatsappLinksWithClicks = $this->business->whatsappLinks()->withCount('clicks')->get();
-        $documentsWithClicks = $this->business->documents()->withCount('clicks')->get();
+        $withCountClicks = function ($query) use ($startDate) {
+            $query->where('created_at', '>=', $startDate);
+        };
+
+        $clicksCountConstraint = $startDate ? ['clicks' => $withCountClicks] : 'clicks';
+
+        $socialLinksWithClicks = $this->business->socialLinks()->withCount($clicksCountConstraint)->get();
+        $whatsappLinksWithClicks = $this->business->whatsappLinks()->withCount($clicksCountConstraint)->get();
+        $documentsWithClicks = $this->business->documents()->withCount($clicksCountConstraint)->get();
 
         $allLinksWithClicks = $socialLinksWithClicks
             ->concat($whatsappLinksWithClicks)
             ->concat($documentsWithClicks)
             ->sortByDesc('clicks_count');
 
-        $clickLabels = $allLinksWithClicks->pluck('alias')->map(fn($alias, $key) => $alias ?: ($allLinksWithClicks[$key]->name ?? $allLinksWithClicks[$key]->url))->toArray();
+        $clickLabels = $allLinksWithClicks->pluck('alias')->map(fn ($alias, $key) => $alias ?: ($allLinksWithClicks[$key]->name ?? $allLinksWithClicks[$key]->url))->toArray();
         $clickCounts = $allLinksWithClicks->pluck('clicks_count')->toArray();
+        $this->clickChart = ['labels' => $clickLabels, 'data' => $clickCounts];
 
         // --- Generar Código QR ---
         $renderer = new ImageRenderer(new RendererStyle(150), new SvgImageBackEnd());
         $writer = new Writer($renderer);
-        $qrCode = $writer->writeString(route('business.public', $this->business->custom_link));
+        $this->qrCode = $writer->writeString(route('business.public', $this->business->custom_link));
 
+        // Despacha un evento al navegador con los nuevos datos para los gráficos
+        $this->dispatch('update-charts', visitsData: $this->visitsData, clickChart: $this->clickChart, range: $this->range);
+    }
+
+    public function render()
+    {
         return view('livewire.dashboard', [
-            'totalVisits' => $totalVisits,
-            'totalClicks' => $totalClicks,
-            'qrCode' => $qrCode,
-            'clickChart' => ['labels' => $clickLabels, 'data' => $clickCounts],
-            'visitsData' => $visitsData,
+            'totalVisits' => $this->totalVisits,
+            'totalClicks' => $this->totalClicks,
+            'qrCode' => $this->qrCode,
+            'clickChart' => $this->clickChart,
+            'visitsData' => $this->visitsData,
+            'rangeText' => $this->rangeText,
         ]);
     }
 
@@ -92,6 +131,7 @@ class Dashboard extends Component
 
         $socialLinkIds = $this->business->socialLinks()->pluck('id');
         $whatsappLinkIds = $this->business->whatsappLinks()->pluck('id');
+        $documentIds = $this->business->documents()->pluck('id');
 
         Click::where('clickable_type', SocialLink::class)
              ->whereIn('clickable_id', $socialLinkIds)
@@ -100,5 +140,33 @@ class Dashboard extends Component
         Click::where('clickable_type', WhatsappLink::class)
              ->whereIn('clickable_id', $whatsappLinkIds)
              ->delete();
+
+        Click::where('clickable_type', Document::class)
+            ->whereIn('clickable_id', $documentIds)
+            ->delete();
+
+        $this->updateStats();
+    }
+
+    private function getStartDate()
+    {
+        return match ($this->range) {
+            '7_days' => Carbon::now()->subDays(7)->startOfDay(),
+            '15_days' => Carbon::now()->subDays(15)->startOfDay(),
+            '1_month' => Carbon::now()->subMonth()->startOfDay(),
+            '1_year' => Carbon::now()->subYear()->startOfDay(),
+            default => null,
+        };
+    }
+
+    private function getRangeText()
+    {
+        return match ($this->range) {
+            '7_days' => __('dashboard.last_7_days'),
+            '15_days' => __('dashboard.last_15_days'),
+            '1_month' => __('dashboard.last_month'),
+            '1_year' => __('dashboard.last_year'),
+            default => __('dashboard.all_time'),
+        };
     }
 }

@@ -1,7 +1,14 @@
 <?php
 
 return [
+    'last_7_days' => 'Últimos 7 días',
+    'last_15_days' => 'Últimos 15 días',
+    'last_month' => 'Último mes',
+    'last_year' => 'Último año',
+    'all_time' => 'Desde el inicio',
+    'showing_stats_for' => 'Mostrando estadísticas de',
     'view_public_profile' => 'Ver Perfil Público',
+    'visits_over_time' => 'Visitas a lo largo del tiempo',
     'edit_information' => 'Editar Información',
     'add_link' => 'Añadir Enlace',
     'qr_code' => 'Código QR',
