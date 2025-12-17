@@ -26,7 +26,7 @@ use App\Livewire\Settings\TwoFactor;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
-Route::redirect('/', '/login')->name('home');
+Route::redirect('/', 'https://web.elink.ec/')->name('home');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
