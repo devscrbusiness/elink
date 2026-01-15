@@ -11,6 +11,8 @@ return [
     'verification_sent' => 'Se ha enviado un nuevo enlace de verificación a tu dirección de correo electrónico.',
     'saved' => 'Guardado.',
     'appearance_subtitle' => 'Actualiza la configuración de apariencia de tu cuenta.',
+    'language_nav' => 'Idioma',
+    'language_subtitle' => 'Selecciona el idioma de la interfaz.',
     'light_theme' => 'Claro',
     'dark_theme' => 'Oscuro',
     'system_theme' => 'Sistema',
@@ -25,4 +27,6 @@ return [
     'delete_account_button' => 'Eliminar Cuenta',
     'delete_account_confirmation_title' => '¿Estás seguro de que quieres eliminar tu cuenta?',
     'delete_account_confirmation_text' => 'Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán borrados permanentemente. Por favor, introduce tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta.',
+    'english' => 'Inglés',
+    'spanish' => 'Español',
 ];

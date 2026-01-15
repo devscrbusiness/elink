@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Notifications\AccountCreated;
 use App\Models\Business;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -51,6 +52,9 @@ class CreateUser extends Component
             'starts_at' => now(),
             'ends_at' => now()->addYear(),
         ]);
+
+        // Enviar correo de bienvenida con las credenciales
+        $user->notify(new AccountCreated($validated['password']));
 
         // Usaremos una notificación flash en la sesión para mostrar en la siguiente página.
         session()->flash('notification', ['text' => __('admin.user_created_success'), 'type' => 'success']);

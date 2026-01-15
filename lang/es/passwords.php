@@ -18,5 +18,6 @@ return [
     'throttled' => 'Por favor, espera antes de volver a intentar.',
     'token' => 'Este código es inválido.',
     'user' => "No existe usuario con ese correo.",
+    'sent_if_exists' => 'Se enviará un enlace de restablecimiento si la cuenta existe.',
 
 ];
