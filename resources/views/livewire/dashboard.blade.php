@@ -1,4 +1,128 @@
-<div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+<div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl"
+    x-data="{
+        visitsChart: null,
+        clicksChart: null,
+        init() {
+            this.updateCharts();
+
+            // Observar cambios en el tema para actualizar los colores de los gráficos automáticamente
+            const observer = new MutationObserver(() => {
+                this.updateCharts();
+            });
+            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+            this.$cleanup(() => observer.disconnect());
+        },
+        updateCharts() {
+            const visitsData = @js($visitsData);
+            const clickChartData = @js($clickChart);
+            const range = @js($range);
+
+            const darkMode = document.documentElement.classList.contains('dark');
+            const gridColor = darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            const fontColor = darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+
+            if (this.visitsChart) this.visitsChart.destroy();
+            if (this.clicksChart) this.clicksChart.destroy();
+
+            // --- Gráfico de Visitas ---
+            const visitsDataByDate = visitsData;
+            if (visitsDataByDate) {
+                let daysToShow;
+                switch(range) {
+                    case '7_days': daysToShow = 7; break;
+                    case '15_days': daysToShow = 15; break;
+                    case '1_month': daysToShow = 30; break;
+                    case '1_year': daysToShow = 365; break;
+                    default: daysToShow = Object.keys(visitsDataByDate).length || 7;
+                }
+
+                const dailyVisits = {};
+                const sortedDates = Object.keys(visitsDataByDate).sort((a, b) => new Date(a) - new Date(b));
+                const lastDate = sortedDates.length > 0 ? new Date(sortedDates[sortedDates.length - 1] + 'T00:00:00') : new Date();
+
+                for (let i = 0; i < daysToShow; i++) {
+                    const date = new Date(lastDate);
+                    date.setDate(date.getDate() - i);
+                    const dateString = date.toISOString().split('T')[0];
+                    dailyVisits[dateString] = visitsDataByDate[dateString] || 0;
+                }
+
+                const visitLabels = Object.keys(dailyVisits).sort().map(dateStr => {
+                    const date = new Date(dateStr + 'T00:00:00');
+                    return date.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short'});
+                });
+                const visitCounts = Object.keys(dailyVisits).sort().map(date => dailyVisits[date]);
+
+                const visitsCtx = document.getElementById('visitsChart');
+                if (visitsCtx) {
+                    this.visitsChart = new Chart(visitsCtx.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: visitLabels,
+                            datasets: [{
+                                label: @js(__('dashboard.visits')),
+                                data: visitCounts,
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                borderWidth: 2,
+                                tension: 0.3,
+                                fill: true,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { color: fontColor, precision: 0 },
+                                    grid: { color: gridColor }
+                                },
+                                x: {
+                                    ticks: { color: fontColor },
+                                    grid: { display: false }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: false }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // --- Gráfico de Clics ---
+            const clicksCtx = document.getElementById('clicksChart');
+            if (clicksCtx) {
+                this.clicksChart = new Chart(clicksCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: clickChartData.labels,
+                        datasets: [{
+                            label: @js(__('dashboard.clicks')),
+                            data: clickChartData.data,
+                            backgroundColor: 'rgba(34, 197, 94, 0.5)',
+                            borderColor: 'rgba(34, 197, 94, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { beginAtZero: true, ticks: { color: fontColor, precision: 0 }, grid: { color: gridColor } },
+                            y: { ticks: { color: fontColor, autoSkip: false }, grid: { display: false } }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+    }"
+>
     <div class="grid auto-rows-min gap-4 md:grid-cols-3">
         {{-- Tarjeta de Perfil y Acciones Rápidas --}}
         <div class="md:col-span-2 p-6 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-neutral-700">
@@ -195,7 +319,10 @@
                     {{ $rangeText }}
                 </p>
             </div>
-            <div class="relative h-64">
+            @php
+                $chartHeight = isset($clickChart['labels']) ? max(256, count($clickChart['labels']) * 40) : 256;
+            @endphp
+            <div class="relative" style="height: {{ $chartHeight }}px">
                 <canvas id="clicksChart"></canvas>
             </div>
         </div>
@@ -250,137 +377,4 @@
         </div>
     </flux:modal>
 
-    @push('scripts')
-    <script>
-        // Almacenamiento de las instancias de los gráficos para poder destruirlas antes de volver a crearlas.
-        let visitsChartInstance = null;
-        let clicksChartInstance = null;
-
-        // Función para inicializar/actualizar los gráficos
-        const updateCharts = (visitsData, clickChartData, range) => {
-            const darkMode = document.documentElement.classList.contains('dark');
-            const gridColor = darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            const fontColor = darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
-
-            // Destruir los gráficos anteriores si existen para evitar conflictos.
-            if (visitsChartInstance) visitsChartInstance.destroy();
-            if (clicksChartInstance) clicksChartInstance.destroy();
-
-            // --- Procesamiento para el Gráfico de Visitas (con zona horaria local) ---
-            const visitsDataByDate = visitsData;
-            if (!visitsDataByDate) {
-                console.error('visitsData is not available');
-                return;
-            }
-            // 1. Determinar el número de días a mostrar según el rango
-            let daysToShow;
-            switch(range) {
-                case '7_days': daysToShow = 7; break;
-                case '15_days': daysToShow = 15; break;
-                case '1_month': daysToShow = 30; break; // Aproximado
-                case '1_year': daysToShow = 365; break; // Aproximado
-                default: daysToShow = Object.keys(visitsDataByDate).length || 7; // Si es 'all', usa los datos o 7 por defecto
-            }
-
-            // 2. Inicializar los días en el gráfico con 0 visitas
-            const dailyVisits = {};
-            const sortedDates = Object.keys(visitsDataByDate).sort((a, b) => new Date(a) - new Date(b));
-            const lastDate = sortedDates.length > 0 ? new Date(sortedDates[sortedDates.length - 1] + 'T00:00:00') : new Date();
-
-            for (let i = 0; i < daysToShow; i++) {
-                const date = new Date(lastDate);
-                date.setDate(date.getDate() - i);
-                const dateString = date.toISOString().split('T')[0];
-                dailyVisits[dateString] = visitsDataByDate[dateString] || 0;
-            }
-
-            // 3. Preparar etiquetas y datos para el gráfico, ordenados por fecha
-            const visitLabels = Object.keys(dailyVisits).sort().map(dateStr => {
-                const date = new Date(dateStr + 'T00:00:00'); // Interpretar como fecha local para el formato de la etiqueta
-                return date.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short'});
-            });
-            const visitCounts = Object.keys(dailyVisits).sort().map(date => dailyVisits[date]);
-
-            // Gráfico de Visitas
-            const visitsCtx = document.getElementById('visitsChart').getContext('2d');
-            visitsChartInstance = new Chart(visitsCtx, {
-                type: 'line',
-                data: {
-                    labels: visitLabels,
-                    datasets: [{
-                        label: '{{ __('dashboard.visits') }}',
-                        data: visitCounts,
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: fontColor, precision: 0 },
-                            grid: { color: gridColor }
-                        },
-                        x: {
-                            ticks: { color: fontColor },
-                            grid: { display: false }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-
-            // Gráfico de Clics
-            const clicksCtx = document.getElementById('clicksChart').getContext('2d');
-            if (!clicksCtx) {
-                return;
-            }
-
-            clicksChartInstance = new Chart(clicksCtx, {
-                type: 'bar',
-                data: {
-                    labels: clickChartData.labels,
-                    datasets: [{
-                        label: '{{ __('dashboard.clicks') }}',
-                        data: clickChartData.data,
-                        backgroundColor: 'rgba(34, 197, 94, 0.5)',
-                        borderColor: 'rgba(34, 197, 94, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { beginAtZero: true, ticks: { color: fontColor, precision: 0 }, grid: { color: gridColor } },
-                        y: { ticks: { color: fontColor }, grid: { display: false } }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        };
-
-        // Se ejecuta la primera vez que la página carga con wire:navigate
-        document.addEventListener('livewire:navigated', () => {
-            updateCharts(@js($visitsData), @js($clickChart), @js($range));
-        });
-
-        // Escucha el evento 'update-charts' despachado desde el backend
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('update-charts', (event) => {
-                updateCharts(event.visitsData, event.clickChart, event.range);
-            });
-        });
-    </script>
-    @endpush
 </div>
