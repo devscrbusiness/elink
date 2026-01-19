@@ -36,7 +36,17 @@
         </div>
 
         <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" :label="__('auth.remember_me')" />
+        <div class="flex items-center gap-2">
+            <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input
+                    type="checkbox"
+                    wire:model="remember"
+                    name="remember"
+                    class="h-4 w-4 rounded border-zinc-300 text-accent focus:ring-accent"
+                />
+                <span class="text-sm text-zinc-600 dark:text-zinc-400">{{ __('auth.remember_me') }}</span>
+            </label>
+        </div>
 
         <div class="flex items-center justify-end">
             <flux:button variant="primary" type="submit" class="w-full" data-test="login-button">
