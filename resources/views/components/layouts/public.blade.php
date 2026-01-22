@@ -10,7 +10,7 @@
 
         <footer class="p-4 text-center text-gray-500 dark:text-gray-400 text-xs">
             Copyright © {{ date('Y') }}. All rights reserved
-            <br> <img src="{{ asset('elinklogo.svg') }}" alt="eLink Logo" class="w-24 m-2 inline">
+            <br> <a href="/"><img src="{{ asset('elinklogo.svg') }}" alt="eLink Logo" class="w-24 m-2 inline"></a>
         </footer>
 
         @stack('scripts')
