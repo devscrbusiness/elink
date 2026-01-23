@@ -2,24 +2,53 @@
     x-data="{
         visitsChart: null,
         clicksChart: null,
+        latestVisitsData: null,
+        latestClickChartData: null,
+        latestRange: null,
         init() {
             this.updateCharts();
 
             // Observar cambios en el tema para actualizar los colores de los gráficos automáticamente
-            const observer = new MutationObserver(() => {
-                this.updateCharts();
-            });
-            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-            this.$cleanup(() => observer.disconnect());
+            if (!document._elink_dashboard_theme_observer) {
+                const observer = new MutationObserver(() => {
+                    // Llamamos a updateCharts globalmente para que la nueva instancia también actualice
+                    try { this.updateCharts(); } catch (e) { /* ignore */ }
+                });
+                observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+                document._elink_dashboard_theme_observer = observer;
+            }
+
+            // Escuchar eventos despachados por Livewire para actualizar los datos de los gráficos
+            // Atamos el listener al elemento raíz para que el handler reciba el evento despachado por Livewire
+            if (!this.$el._elink_dashboard_listener_added) {
+                const handler = (e) => {
+                    this.latestVisitsData = e.detail.visitsData ?? null;
+                    this.latestClickChartData = e.detail.clickChart ?? null;
+                    this.latestRange = e.detail.range ?? null;
+                    this.updateCharts();
+                };
+                this.$el.addEventListener('update-charts', handler);
+                this.$el._elink_dashboard_listener_added = true;
+            }
         },
         updateCharts() {
-            const visitsData = @js($visitsData);
-            const clickChartData = @js($clickChart);
-            const range = @js($range);
+            const visitsData = this.latestVisitsData ?? @js($visitsData);
+            const clickChartData = this.latestClickChartData ?? @js($clickChart);
+            const range = this.latestRange ?? @js($range);
 
             const darkMode = document.documentElement.classList.contains('dark');
             const gridColor = darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
             const fontColor = darkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+
+            // Asegurarnos de destruir cualquier instancia previa de Chart (si existe)
+            try {
+                const existingVisits = Chart.getChart('visitsChart') || Chart.getChart(document.getElementById('visitsChart'));
+                if (existingVisits) existingVisits.destroy();
+            } catch (e) { /* ignore if Chart not available */ }
+            try {
+                const existingClicks = Chart.getChart('clicksChart') || Chart.getChart(document.getElementById('clicksChart'));
+                if (existingClicks) existingClicks.destroy();
+            } catch (e) { /* ignore if Chart not available */ }
 
             if (this.visitsChart) this.visitsChart.destroy();
             if (this.clicksChart) this.clicksChart.destroy();
